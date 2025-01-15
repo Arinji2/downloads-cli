@@ -17,6 +17,6 @@ func main() {
 	for _, file := range files {
 		println(file.Name())
 	}
-	store.InitStore()
+	store.InitStore(false)
 	logger.InitLogger()
 }
