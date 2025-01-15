@@ -32,7 +32,7 @@ func readAndParseStoredData(s *Store) ([]StoredData, error) {
 	return storedData, nil
 }
 
-func generateStoreID(s *Store) (int, error) {
+func GenerateStoreID(s *Store) (int, error) {
 	storedData, err := readAndParseStoredData(s)
 	if err != nil {
 		return 0, err
