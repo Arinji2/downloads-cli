@@ -24,9 +24,10 @@ type StoredData struct {
 	InProgress bool     `json:"in_progress"`
 }
 
-func InitStore() *Store {
+func InitStore(reset bool) *Store {
+	changeToGoModDir()
 	_, err := os.Stat(STORAGE_FILENAME)
-	if err != nil || os.IsNotExist(err) {
+	if err != nil || os.IsNotExist(err) || reset {
 		file, err := os.Create(STORAGE_FILENAME)
 		if err != nil {
 			logger.GLogger.AddToLog("FATAL", err.Error())
@@ -171,11 +172,9 @@ func (s *Store) ClearStore() error {
 	s.cachedDataMutex.Lock()
 	defer s.cachedDataMutex.Unlock()
 
-	if err := os.Remove(s.storageFilename); err != nil && !os.IsNotExist(err) {
-		logger.GLogger.AddToLog("ERROR", err.Error())
-		return err
-	}
-
+	newS := InitStore(true)
+	s.cachedData = newS.cachedData
+	s.cacheExpired = newS.cacheExpired
 	s.cachedData = make([]StoredData, 0)
 	s.cacheExpired = true
 	return nil
