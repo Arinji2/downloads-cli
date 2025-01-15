@@ -1,0 +1,5 @@
+{
+  "downloads_folder": "/home/example/Downloads/",
+  "log_file": "log.txt",
+  "check_interval": 60
+}

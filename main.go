@@ -4,13 +4,13 @@ import (
 	"os"
 
 	"github.com/Arinji2/downloads-cli/logger"
+	"github.com/Arinji2/downloads-cli/options"
 	"github.com/Arinji2/downloads-cli/store"
 )
 
-var DOWNLOADS_FOLDER = "/home/arinji/Downloads/"
-
 func main() {
-	files, err := os.ReadDir(DOWNLOADS_FOLDER)
+	opts := options.GetOptions()
+	files, err := os.ReadDir(opts.DownloadsFolder)
 	if err != nil {
 		panic(err)
 	}
@@ -18,5 +18,5 @@ func main() {
 		println(file.Name())
 	}
 	store.InitStore(false)
-	logger.InitLogger()
+	logger.InitLogger(opts.LogFile)
 }

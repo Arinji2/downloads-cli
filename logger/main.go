@@ -6,7 +6,7 @@ import (
 
 var GLogger *cli_log.Logger
 
-func InitLogger() {
-	logger := cli_log.NewLogger("log.txt", 0, "Downloads CLI")
+func InitLogger(logFile string) {
+	logger := cli_log.NewLogger(logFile, 0, "Downloads CLI")
 	GLogger = logger
 }

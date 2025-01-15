@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/Arinji2/downloads-cli/logger"
+	"github.com/Arinji2/downloads-cli/utils"
 )
 
 var STORAGE_FILENAME = "store.json"
@@ -25,7 +26,7 @@ type StoredData struct {
 }
 
 func InitStore(reset bool) *Store {
-	changeToGoModDir()
+	utils.ChangeToGoModDir()
 	_, err := os.Stat(STORAGE_FILENAME)
 	if err != nil || os.IsNotExist(err) || reset {
 		file, err := os.Create(STORAGE_FILENAME)
