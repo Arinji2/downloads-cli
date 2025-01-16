@@ -69,7 +69,12 @@ func (d *Delete) RunDeleteJobs() {
 				if data.InProgress {
 					continue
 				}
-				FoundDelete(data, d)
+				_, err := FoundDelete(data, d)
+				if err != nil {
+					logger.GLogger.AddToLog("ERROR", err.Error())
+					continue
+				}
+
 			}
 		}
 	}
