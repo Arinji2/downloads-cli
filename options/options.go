@@ -8,10 +8,14 @@ import (
 	"github.com/Arinji2/downloads-cli/utils"
 )
 
+type CheckInterval struct {
+	Delete int `json:"delete"`
+	Move   int `json:"move"`
+}
 type Options struct {
-	DownloadsFolder string `json:"downloads_folder"`
-	LogFile         string `json:"log_file"`
-	CheckInterval   int    `json:"check_interval"`
+	DownloadsFolder string        `json:"downloads_folder"`
+	LogFile         string        `json:"log_file"`
+	CheckInterval   CheckInterval `json:"check_interval"`
 }
 
 var OPTIONS_FILENAME = "options.json"

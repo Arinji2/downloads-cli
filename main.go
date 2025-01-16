@@ -24,8 +24,9 @@ func main() {
 	logger.InitLogger(opts.LogFile)
 
 	deleteOps := ops.InitOperations("DELETE", 0, s)
-	deleteJob := delete.InitDelete(deleteOps)
-	deleteJob.NewDeleteRegistered("d-3d-image.png")
+	deleteJob := delete.InitDelete(deleteOps, opts.CheckInterval.Delete)
 
-	watcher.StartWatcher(opts)
+	go watcher.StartWatcher(opts, deleteJob)
+	go deleteJob.RunDeleteJobs()
+	<-make(chan struct{})
 }

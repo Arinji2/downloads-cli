@@ -5,11 +5,12 @@ import (
 	"log"
 
 	"github.com/Arinji2/downloads-cli/logger"
+	"github.com/Arinji2/downloads-cli/ops/delete"
 	"github.com/Arinji2/downloads-cli/options"
 	"github.com/helshabini/fsbroker"
 )
 
-func StartWatcher(opts options.Options) {
+func StartWatcher(opts options.Options, deleteJob *delete.Delete) {
 	config := fsbroker.DefaultFSConfig()
 	broker, err := fsbroker.NewFSBroker(config)
 	if err != nil {
@@ -24,15 +25,15 @@ func StartWatcher(opts options.Options) {
 	}
 
 	broker.Start()
-	watcherLog := WatcherLog{}
+	watcherLog := WatcherLog{
+		DeleteJobs: *deleteJob,
+	}
 
 	for {
 		select {
 		case event := <-broker.Next():
-			fmt.Println(event.Type.String())
 			if event.Type.String() == "Create" {
-				fmt.Println("Create event")
-				FileCreated(event.Path)
+				watcherLog.FileCreated(event.Path)
 			}
 			if event.Type.String() == "Remove" {
 				watcherLog.FileDeleted(event.Path, event.Timestamp)
