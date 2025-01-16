@@ -1,10 +1,12 @@
 package watcher
 
 import (
+	"fmt"
 	"slices"
 	"strings"
 	"time"
 
+	"github.com/Arinji2/downloads-cli/logger"
 	"github.com/Arinji2/downloads-cli/ops/delete"
 )
 
@@ -15,15 +17,13 @@ type DeletedFile struct {
 
 type WatcherLog struct {
 	DeletedFiles []DeletedFile
+	DeleteJobs   delete.Delete
 }
 
-func FileCreated(path string, deleteJob *delete.Delete) {
-	println("File created: " + path)
-	fileName := strings.Split(path, "/")[len(strings.Split(path, "/"))-1]
-	typeOfOperation := strings.Split(fileName, "-")[0]
-	if typeOfOperation == "d" {
-		deleteJob.NewDeleteRegistered(fileName)
-	}
+func (w *WatcherLog) FileCreated(path string) {
+	filename := strings.Split(path, "/")[len(strings.Split(path, "/"))-1]
+	logger.GLogger.Notify(fmt.Sprintf("Created File %s", filename))
+	w.DeleteJobs.NewDeleteRegistered(filename, path)
 }
 
 func (w *WatcherLog) FileDeleted(path string, timestamp time.Time) {

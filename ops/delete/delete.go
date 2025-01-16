@@ -2,6 +2,8 @@ package delete
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -21,7 +23,7 @@ func InitDelete(o *ops.Operation) *Delete {
 	}
 }
 
-func (d *Delete) NewDeleteRegistered(fileName string) error {
+func (d *Delete) NewDeleteRegistered(fileName string, pathName string) error {
 	parts := strings.Split(fileName, ".")
 	if len(parts) < 2 {
 		logger.GLogger.AddToLog("ERROR", "invalid file name for delete")
@@ -69,13 +71,14 @@ func (d *Delete) NewDeleteRegistered(fileName string) error {
 	if err != nil {
 		return err
 	}
-
+	formattedTime := deletionTime.Format("2006-01-02 15:04:05.999999999 -0700 MST")
 	storeFile := store.StoredData{
 		ID:   id,
 		Task: "DELETE",
 		Args: []string{
 			fileName,
-			deletionTime.String(),
+			formattedTime,
+			pathName,
 		},
 		InProgress: false,
 	}
@@ -83,4 +86,48 @@ func (d *Delete) NewDeleteRegistered(fileName string) error {
 	d.Operations.Store.AddStoredData(storeFile)
 
 	return nil
+}
+
+func (d *Delete) RunDeleteJobs() {
+	ticker := time.NewTicker(time.Second * 5)
+	for range ticker.C {
+
+		storedData, err := d.Operations.Store.GetAllStoredData()
+		if err != nil {
+			logger.GLogger.AddToLog("ERROR", err.Error())
+			break
+		}
+		println("CHECKING JOBS")
+		for _, data := range storedData {
+			if data.Task == "DELETE" {
+				if data.InProgress {
+					continue
+				}
+				println("FOUND JOB")
+				data.InProgress = true
+				d.Operations.Store.UpdateStoredData(data.ID, data)
+				currentTime := time.Now()
+				layout := "2006-01-02 15:04:05.999999999 -0700 MST"
+				deletionTime, err := time.Parse(layout, data.Args[1])
+				if err != nil {
+					logger.GLogger.AddToLog("ERROR", err.Error())
+					d.Operations.Store.DeleteStoredData(data.ID)
+					break
+				}
+				if currentTime.After(deletionTime) {
+
+					err := os.Remove(data.Args[2])
+					if err != nil {
+						log.Fatal(err)
+					}
+					d.Operations.Store.DeleteStoredData(data.ID)
+					logger.GLogger.Notify(fmt.Sprintf("Finish Operation on File: %s", data.Args[0]))
+				} else {
+					data.InProgress = false
+					d.Operations.Store.UpdateStoredData(data.ID, data)
+					println("Job not finished yet")
+				}
+			}
+		}
+	}
 }
