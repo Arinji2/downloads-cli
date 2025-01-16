@@ -12,12 +12,17 @@ import (
 )
 
 type Delete struct {
-	Operations *ops.Operation
+	Operations    *ops.Operation
+	CheckInterval int
 }
 
-func InitDelete(o *ops.Operation) *Delete {
+func InitDelete(o *ops.Operation, interval int) *Delete {
+	if interval == 0 {
+		interval = 30
+	}
 	return &Delete{
-		Operations: o,
+		Operations:    o,
+		CheckInterval: interval,
 	}
 }
 
@@ -87,7 +92,7 @@ func (d *Delete) NewDeleteRegistered(fileName string, pathName string) error {
 }
 
 func (d *Delete) RunDeleteJobs() {
-	ticker := time.NewTicker(time.Second * 5)
+	ticker := time.NewTicker(time.Second * time.Duration(d.CheckInterval))
 	for range ticker.C {
 
 		storedData, err := d.Operations.Store.GetAllStoredData()

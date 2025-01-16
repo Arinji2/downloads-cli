@@ -24,7 +24,7 @@ func main() {
 	logger.InitLogger(opts.LogFile)
 
 	deleteOps := ops.InitOperations("DELETE", 0, s)
-	deleteJob := delete.InitDelete(deleteOps)
+	deleteJob := delete.InitDelete(deleteOps, opts.CheckInterval.Delete)
 
 	go watcher.StartWatcher(opts, deleteJob)
 	go deleteJob.RunDeleteJobs()
