@@ -11,6 +11,8 @@ import (
 	"github.com/Arinji2/downloads-cli/store"
 )
 
+var DEFAULT_DELETE_INTERVAL = 30
+
 type Delete struct {
 	Operations    *ops.Operation
 	CheckInterval int
@@ -18,7 +20,7 @@ type Delete struct {
 
 func InitDelete(o *ops.Operation, interval int) *Delete {
 	if interval == 0 {
-		interval = 30
+		interval = DEFAULT_DELETE_INTERVAL
 	}
 	return &Delete{
 		Operations:    o,

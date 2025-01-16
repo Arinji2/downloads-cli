@@ -29,7 +29,7 @@ func FoundDelete(data store.StoredData, d *Delete) {
 			return
 		}
 		d.Operations.Store.DeleteStoredData(data.ID)
-		logger.GLogger.Notify(fmt.Sprintf("Finish Operation on File: %s", data.Args[0]))
+		logger.GLogger.AddToLog("INFO", fmt.Sprintf("Deleted file: %s", data.Args[0]))
 		return
 	} else {
 		data.InProgress = false
