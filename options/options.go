@@ -13,9 +13,10 @@ type CheckInterval struct {
 	Move   int `json:"move"`
 }
 type Options struct {
-	DownloadsFolder string        `json:"downloads_folder"`
-	LogFile         string        `json:"log_file"`
-	CheckInterval   CheckInterval `json:"check_interval"`
+	DownloadsFolder string            `json:"downloads_folder"`
+	LogFile         string            `json:"log_file"`
+	CheckInterval   CheckInterval     `json:"check_interval"`
+	MovePresets     map[string]string `json:"move_presets"`
 }
 
 var OPTIONS_FILENAME = "options.json"
