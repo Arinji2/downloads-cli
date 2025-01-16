@@ -7,10 +7,7 @@ type Operation struct {
 	Store *store.Store
 }
 
-func InitOperations(name string, totalWorkers int, s *store.Store) *Operation {
-	if totalWorkers == 0 {
-		totalWorkers = 5
-	}
+func InitOperations(name string, s *store.Store) *Operation {
 	return &Operation{
 		Name:  name,
 		Store: s,
