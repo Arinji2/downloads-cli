@@ -8,6 +8,7 @@ import (
 	"github.com/Arinji2/downloads-cli/ops/delete"
 	"github.com/Arinji2/downloads-cli/options"
 	"github.com/Arinji2/downloads-cli/store"
+	"github.com/Arinji2/downloads-cli/watcher"
 )
 
 func main() {
@@ -25,4 +26,6 @@ func main() {
 	deleteOps := ops.InitOperations("DELETE", 0, s)
 	deleteJob := delete.InitDelete(deleteOps)
 	deleteJob.NewDeleteRegistered("d-3d-image.png")
+
+	watcher.StartWatcher(opts)
 }
