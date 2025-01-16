@@ -12,6 +12,7 @@ import (
 func FoundDelete(data store.StoredData, d *Delete) {
 	data.InProgress = true
 	d.Operations.Store.UpdateStoredData(data.ID, data)
+
 	currentTime := time.Now()
 	layout := "2006-01-02 15:04:05.999999999 -0700 MST"
 	deletionTime, err := time.Parse(layout, data.Args[1])
@@ -20,8 +21,8 @@ func FoundDelete(data store.StoredData, d *Delete) {
 		d.Operations.Store.DeleteStoredData(data.ID)
 		return
 	}
-	if currentTime.After(deletionTime) {
 
+	if currentTime.After(deletionTime) {
 		err := os.Remove(data.Args[2])
 		if err != nil {
 			logger.GLogger.AddToLog("ERROR", err.Error())
