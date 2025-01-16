@@ -26,9 +26,12 @@ func main() {
 
 	deleteOps := ops.InitOperations("DELETE", s)
 	deleteJob := delete.InitDelete(deleteOps, opts.CheckInterval.Delete)
+
 	moveOps := ops.InitOperations("MOVE", s)
 	moveJob := move.InitMove(moveOps, opts.CheckInterval.Move, opts.MovePresets)
+
 	go watcher.StartWatcher(opts, deleteJob)
+
 	go deleteJob.RunDeleteJobs()
 	go moveJob.RunMoveJobs()
 	<-make(chan struct{})
