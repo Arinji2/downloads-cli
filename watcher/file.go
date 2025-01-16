@@ -2,7 +2,10 @@ package watcher
 
 import (
 	"slices"
+	"strings"
 	"time"
+
+	"github.com/Arinji2/downloads-cli/ops/delete"
 )
 
 type DeletedFile struct {
@@ -14,8 +17,13 @@ type WatcherLog struct {
 	DeletedFiles []DeletedFile
 }
 
-func FileCreated(path string) {
+func FileCreated(path string, deleteJob *delete.Delete) {
 	println("File created: " + path)
+	fileName := strings.Split(path, "/")[len(strings.Split(path, "/"))-1]
+	typeOfOperation := strings.Split(fileName, "-")[0]
+	if typeOfOperation == "d" {
+		deleteJob.NewDeleteRegistered(fileName)
+	}
 }
 
 func (w *WatcherLog) FileDeleted(path string, timestamp time.Time) {
