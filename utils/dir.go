@@ -1,9 +1,11 @@
 package utils
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/Arinji2/downloads-cli/logger"
 )
@@ -30,4 +32,12 @@ func ChangeToGoModDir() {
 		}
 		dir = parentDir
 	}
+}
+
+func GetOperationType(fileName string) (string, error) {
+	rawType := strings.Split(fileName, "-")[0]
+	if rawType != "d" && rawType != "md" && rawType != "mc" {
+		return "", fmt.Errorf("invalid operation type")
+	}
+	return rawType, nil
 }
