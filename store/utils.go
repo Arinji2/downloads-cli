@@ -23,8 +23,7 @@ func readAndParseStoredData(s *Store) ([]StoredData, error) {
 	var storedData []StoredData
 	err = json.Unmarshal(data, &storedData)
 	if err != nil {
-		logger.GLogger.AddToLog("ERROR", err.Error())
-		return nil, err
+		storedData = make([]StoredData, 0)
 	}
 
 	s.cachedData = storedData
