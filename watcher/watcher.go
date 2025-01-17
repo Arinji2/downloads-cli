@@ -3,6 +3,8 @@ package watcher
 import (
 	"fmt"
 	"log"
+	"regexp"
+	"strings"
 
 	"github.com/Arinji2/downloads-cli/logger"
 	"github.com/Arinji2/downloads-cli/ops/delete"
@@ -34,6 +36,18 @@ func StartWatcher(opts options.Options, deleteJob *delete.Delete, moveJob *move.
 	for {
 		select {
 		case event := <-broker.Next():
+			fileRegex := `^[^-]+?-[^-]+?-[^-]+?\.txt$`
+			parts := strings.Split(event.Path, "/")
+			c, err := regexp.Compile(fileRegex)
+			if err != nil {
+				fmt.Println(err)
+			}
+			match := c.MatchString(parts[len(parts)-1])
+			println(match)
+			if !match {
+				continue
+			}
+			println(event.Path)
 			if event.Type.String() == "Create" {
 				watcherLog.FileCreated(event.Path)
 			}
