@@ -12,14 +12,36 @@ import (
 	"github.com/Arinji2/downloads-cli/store"
 )
 
-func TestFoundDefaultMove(t *testing.T) {
+func setupFS(t *testing.T, tempDir, moveType, name string) (fileName, testFile, destPath string) {
+	switch moveType {
+	case "md":
+		destPath = "test"
+	case "mc":
+		destPath = filepath.Join(tempDir, "test")
+	default:
+		t.Error("Invalid move type")
+	}
+	os.Mkdir(destPath, 0755)
+	formattedDestPath := strings.ReplaceAll(destPath, "/", "[")
+	fileName = fmt.Sprintf("%s-%s-%s.txt", moveType, formattedDestPath, name)
+	testFile = filepath.Join(tempDir, fileName)
+	err := os.WriteFile(testFile, []byte("test"), 0644)
+	if err != nil {
+		t.Error(err)
+	}
+	return fileName, testFile, destPath
+}
+
+func TestFoundDefaultMove_Valid(t *testing.T) {
 	s := store.InitStore(true)
 	ops := ops.InitTestingOperations("MOVE", s)
+	tempDir := t.TempDir()
+	fileName, testFile, destPath := setupFS(t, tempDir, "md", "test")
 	moveJob := move.InitMove(ops, 0, map[string]string{
-		"test": "/tmp/test",
+		"test": destPath,
 	})
-
-	err := moveJob.NewMoveRegistered("md-test-test1.txt", "/tmp/md-test-test1.txt")
+	fmt.Println(fileName, testFile, destPath)
+	err := moveJob.NewMoveRegistered(fileName, testFile)
 	if err != nil {
 		t.Error(err)
 	}
@@ -50,17 +72,44 @@ func TestFoundDefaultMove(t *testing.T) {
 	}
 }
 
-func setupFS(t *testing.T, tempDir string, name string) (fileName, testFile, destPath string) {
-	destPath = filepath.Join(tempDir, "test")
-	os.Mkdir(destPath, 0755)
-	formattedDestPath := strings.ReplaceAll(destPath, "/", "[")
-	fileName = fmt.Sprintf("mc-%s-%s.txt", formattedDestPath, name)
-	testFile = filepath.Join(tempDir, fileName)
-	err := os.WriteFile(testFile, []byte("test"), 0644)
+func TestFoundDefaultMove_Broken(t *testing.T) {
+	s := store.InitStore(true)
+	ops := ops.InitTestingOperations("MOVE", s)
+	tempDir := t.TempDir()
+	fileName, testFile, destPath := setupFS(t, tempDir, "md", "test")
+	moveJob := move.InitMove(ops, 0, map[string]string{
+		"test": destPath,
+	})
+	err := moveJob.NewMoveRegistered(fileName, testFile)
 	if err != nil {
 		t.Error(err)
 	}
-	return fileName, testFile, destPath
+
+	data, err := s.GetAllStoredData()
+	if err != nil {
+		t.Error(err)
+	}
+	if len(data) != 1 {
+		t.Error("Expected 1 stored data, got ", len(data))
+	}
+
+	fileData := data[0]
+	fileData.Args[2] = "testBroken"
+	moved, err := move.FoundDefaultMove(fileData, moveJob)
+	if err == nil {
+		t.Error("Expected error, got nil")
+	}
+	if moved {
+		t.Error("Expected moved to be false")
+	}
+
+	data, err = s.GetAllStoredData()
+	if err != nil {
+		t.Error(err)
+	}
+	if len(data) != 0 {
+		t.Error("Expected 0 stored data, got ", len(data))
+	}
 }
 
 func TestFoundCustomMove_Valid(t *testing.T) {
@@ -68,7 +117,7 @@ func TestFoundCustomMove_Valid(t *testing.T) {
 	ops := ops.InitTestingOperations("MOVE", s)
 	tempDir := t.TempDir()
 	moveJob := move.InitMove(ops, 0, map[string]string{})
-	fileName, testFile, _ := setupFS(t, tempDir, "test")
+	fileName, testFile, _ := setupFS(t, tempDir, "mc", "test")
 	err := moveJob.NewMoveRegistered(fileName, testFile)
 	if err != nil {
 		t.Error(err)
@@ -95,7 +144,7 @@ func TestFoundCustomMove_Broken(t *testing.T) {
 	s := store.InitStore(true)
 	ops := ops.InitTestingOperations("MOVE", s)
 	tempDir := t.TempDir()
-	fileName, testFile, destPath := setupFS(t, tempDir, "brokenTest")
+	fileName, testFile, destPath := setupFS(t, tempDir, "mc", "brokenTest")
 	moveJob := move.InitMove(ops, 0, map[string]string{})
 	err := moveJob.NewMoveRegistered(fileName, testFile)
 	if err != nil {

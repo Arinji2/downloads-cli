@@ -23,6 +23,7 @@ func FoundDefaultMove(data store.StoredData, m *Move) (moved bool, err error) {
 	fileName := data.Args[0]
 	originalPath := data.Args[1]
 	destPath := m.MovePresets[data.Args[2]]
+	m.Operations.Store.DeleteStoredData(data.ID)
 	if destPath == "" {
 		return false, fmt.Errorf("invalid move string for move default")
 	}
@@ -30,10 +31,6 @@ func FoundDefaultMove(data store.StoredData, m *Move) (moved bool, err error) {
 		destPath = fmt.Sprintf("%s/%s", destPath, fileName)
 	}
 
-	m.Operations.Store.DeleteStoredData(data.ID)
-	if m.Operations.IsTesting {
-		return true, nil
-	}
 	err = os.Rename(originalPath, destPath)
 	if err != nil {
 		return false, err
