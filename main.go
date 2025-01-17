@@ -30,7 +30,7 @@ func main() {
 	moveOps := ops.InitOperations("MOVE", s)
 	moveJob := move.InitMove(moveOps, opts.CheckInterval.Move, opts.MovePresets)
 
-	go watcher.StartWatcher(opts, deleteJob)
+	go watcher.StartWatcher(opts, deleteJob, moveJob)
 
 	go deleteJob.RunDeleteJobs()
 	go moveJob.RunMoveJobs()

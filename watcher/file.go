@@ -8,6 +8,8 @@ import (
 
 	"github.com/Arinji2/downloads-cli/logger"
 	"github.com/Arinji2/downloads-cli/ops/delete"
+	"github.com/Arinji2/downloads-cli/ops/move"
+	"github.com/Arinji2/downloads-cli/utils"
 )
 
 type DeletedFile struct {
@@ -18,12 +20,39 @@ type DeletedFile struct {
 type WatcherLog struct {
 	DeletedFiles []DeletedFile
 	DeleteJobs   delete.Delete
+	MoveJobs     move.Move
 }
 
 func (w *WatcherLog) FileCreated(path string) {
 	filename := strings.Split(path, "/")[len(strings.Split(path, "/"))-1]
 	logger.GLogger.Notify(fmt.Sprintf("Created File %s", filename))
-	w.DeleteJobs.NewDeleteRegistered(filename, path)
+	operationType, err := utils.GetOperationType(filename)
+	if err != nil {
+		logger.GLogger.AddToLog("ERROR", err.Error())
+		return
+	}
+	switch operationType {
+	case "d":
+		err := w.DeleteJobs.NewDeleteRegistered(filename, path)
+		if err != nil {
+			err = fmt.Errorf("error creating delete job: %v", err)
+			logger.GLogger.AddToLog("ERROR", err.Error())
+		}
+	case "md":
+		err := w.MoveJobs.NewMoveRegistered(filename, path)
+		if err != nil {
+			err = fmt.Errorf("error creating move preset job: %v", err)
+			logger.GLogger.AddToLog("ERROR", err.Error())
+		}
+	case "mc":
+		err := w.MoveJobs.NewMoveRegistered(filename, path)
+		if err != nil {
+			err = fmt.Errorf("error creating move custom job: %v", err)
+			logger.GLogger.AddToLog("ERROR", err.Error())
+		}
+	default:
+		logger.GLogger.AddToLog("ERROR", fmt.Sprintf("invalid operation type: %s", operationType))
+	}
 }
 
 func (w *WatcherLog) FileDeleted(path string, timestamp time.Time) {
