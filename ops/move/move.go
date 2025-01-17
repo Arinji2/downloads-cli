@@ -1,6 +1,7 @@
 package move
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -74,11 +75,25 @@ func (m *Move) RunMoveJobs() {
 				if data.InProgress {
 					continue
 				}
-				// _, err := FoundDelete(data, m)
-				// if err != nil {
-				// 	logger.GLogger.AddToLog("ERROR", err.Error())
-				// 	continue
-				// }
+				typeOfMove := MoveType(strings.Split(data.Args[0], "-")[0])
+				switch typeOfMove {
+				case MoveMD:
+					err := FoundDefaultMove(data, m)
+					if err != nil {
+						err = fmt.Errorf("error handling default move job %v", err)
+						logger.GLogger.AddToLog("ERROR", err.Error())
+						continue
+					}
+				case MoveMC:
+					err := FoundCustomMove(data, m)
+					if err != nil {
+						err = fmt.Errorf("error handling custom move job %v", err)
+						logger.GLogger.AddToLog("ERROR", err.Error())
+						continue
+					}
+				default:
+					continue
+				}
 			}
 		}
 	}
