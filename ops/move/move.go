@@ -1,6 +1,7 @@
 package move
 
 import (
+	"strings"
 	"time"
 
 	"github.com/Arinji2/downloads-cli/logger"
@@ -9,6 +10,13 @@ import (
 )
 
 var DEFAULT_MOVE_INTERVAL = 30
+
+type MoveType string
+
+const (
+	MoveMD MoveType = "md"
+	MoveMC MoveType = "mc"
+)
 
 type Move struct {
 	Operations    *ops.Operation
@@ -28,7 +36,8 @@ func InitMove(o *ops.Operation, interval int, movePresets map[string]string) *Mo
 }
 
 func (m *Move) NewMoveRegistered(fileName string, pathName string) error {
-	moveType, moveStr, err := verifyMove(fileName)
+	err := verifyMove(fileName, m)
+	destPath := CreateDesttinationPath(strings.Split(pathName, "-")[1])
 	if err != nil {
 		return err
 	}
@@ -41,13 +50,11 @@ func (m *Move) NewMoveRegistered(fileName string, pathName string) error {
 		Task: "MOVE",
 		Args: []string{
 			fileName,
-			moveStr,
 			pathName,
-			moveType,
+			destPath,
 		},
 		InProgress: false,
 	}
-
 	m.Operations.Store.AddStoredData(storeFile)
 
 	return nil
