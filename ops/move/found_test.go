@@ -41,7 +41,6 @@ func TestFoundDefaultMove_Valid(t *testing.T) {
 	moveJob := move.InitMove(ops, 0, map[string]string{
 		"test": destPath,
 	})
-	fmt.Println(fileName, testFile, destPath)
 	err := moveJob.NewMoveRegistered(fileName, testFile)
 	if err != nil {
 		t.Error(err)
