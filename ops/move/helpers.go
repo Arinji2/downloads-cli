@@ -34,7 +34,7 @@ func verifyMove(fileName string, m *Move) (err error) {
 		}
 		return nil
 	case MoveMC:
-		destPath := CreateDesttinationPath(moveStr)
+		destPath := CreateDestinationPath(moveStr)
 		currentDir, _ := os.Getwd()
 		checkCustomDirExists := os.Chdir(destPath)
 		os.Chdir(currentDir)
@@ -47,7 +47,7 @@ func verifyMove(fileName string, m *Move) (err error) {
 	}
 }
 
-func CreateDesttinationPath(rawPath string) string {
+func CreateDestinationPath(rawPath string) string {
 	var destPath string
 	destPath = strings.ReplaceAll(rawPath, "[", "/")
 	homeDir, _ := os.UserHomeDir()
