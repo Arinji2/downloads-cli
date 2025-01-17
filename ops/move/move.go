@@ -38,7 +38,7 @@ func InitMove(o *ops.Operation, interval int, movePresets map[string]string) *Mo
 
 func (m *Move) NewMoveRegistered(fileName string, pathName string) error {
 	err := verifyMove(fileName, m)
-	destPath := CreateDestinationPath(strings.Split(pathName, "-")[1])
+	destPath := CreateDestinationPath(strings.Split(fileName, "-")[1])
 	if err != nil {
 		return err
 	}
