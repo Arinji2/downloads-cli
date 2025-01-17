@@ -58,11 +58,7 @@ func FoundCustomMove(data store.StoredData, m *Move) (moved bool, err error) {
 	if !strings.HasSuffix(destPath, fileName) {
 		destPath = fmt.Sprintf("%s/%s", destPath, fileName)
 	}
-
 	m.Operations.Store.DeleteStoredData(data.ID)
-	if m.Operations.IsTesting {
-		return true, nil
-	}
 	err = os.Rename(originalPath, destPath)
 	if err != nil {
 		return false, err
