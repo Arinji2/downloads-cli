@@ -7,11 +7,11 @@ SESSION_NAME="downloads-cli"
 tmux has-session -t $SESSION_NAME 2>/dev/null
 if [ $? != 0 ]; then
   # Create a new session
-  tmux new-session -d -s $SESSION_NAME -c ~/code/nextjs-forum
+  tmux new-session -d -s $SESSION_NAME -c ~/code/downloads-cli
 
   # Create a window for nvim
-  tmux rename-window -t $SESSION_NAME:0 "nvim"
-  tmux send-keys -t $SESSION_NAME:0 "nvim" C-m
+  tmux rename-window -t $SESSION_NAME:0 "Window"
+  tmux send-keys -t $SESSION_NAME:0 "Window" C-m
 
   # Split the pane
   tmux split-window -h -t $SESSION_NAME:0
@@ -19,7 +19,7 @@ if [ $? != 0 ]; then
   tmux send-keys -t $SESSION_NAME:0.1 "gow -c run ." C-m
 
   # Create an empty window
-  tmux new-window -t $SESSION_NAME -n "Empty"
+  tmux new-window -t $SESSION_NAME -n "Window"
 fi
 
 # Select the "nvim" window before attaching
