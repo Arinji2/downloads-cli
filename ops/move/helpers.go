@@ -29,7 +29,6 @@ func verifyMove(fileName string, m *Move) (err error) {
 	moveType := MoveType(rawMoveType)
 	switch moveType {
 	case MoveMD:
-		fmt.Println("HERE", m.MovePresets[moveStr], moveStr, m.MovePresets)
 		if m.MovePresets[moveStr] == "" {
 			return fmt.Errorf("invalid move string for move default")
 		}
@@ -40,7 +39,6 @@ func verifyMove(fileName string, m *Move) (err error) {
 		checkCustomDirExists := os.Chdir(destPath)
 		os.Chdir(currentDir)
 		if checkCustomDirExists != nil {
-			fmt.Println(checkCustomDirExists.Error())
 			return fmt.Errorf("invalid move string for move custom")
 		}
 		return nil
