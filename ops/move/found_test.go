@@ -10,6 +10,7 @@ import (
 	"github.com/Arinji2/downloads-cli/ops"
 	"github.com/Arinji2/downloads-cli/ops/move"
 	"github.com/Arinji2/downloads-cli/store"
+	"github.com/Arinji2/downloads-cli/utils"
 )
 
 func setupFS(t *testing.T, tempDir, moveType, name string) (fileName, testFile, destPath string) {
@@ -70,6 +71,9 @@ func TestFoundDefaultMove_Valid(t *testing.T) {
 	if len(data) != 0 {
 		t.Error("Expected 0 stored data, got ", len(data))
 	}
+
+	utils.ChangeToGoModDir()
+	os.RemoveAll("/test")
 }
 
 func TestFoundDefaultMove_Broken(t *testing.T) {
@@ -110,6 +114,10 @@ func TestFoundDefaultMove_Broken(t *testing.T) {
 	if len(data) != 0 {
 		t.Error("Expected 0 stored data, got ", len(data))
 	}
+
+	utils.ChangeToGoModDir()
+	wd, _ := os.Getwd()
+	os.RemoveAll(filepath.Join(wd, "test"))
 }
 
 func TestFoundCustomMove_Valid(t *testing.T) {
@@ -138,6 +146,10 @@ func TestFoundCustomMove_Valid(t *testing.T) {
 	if !moved {
 		t.Error("Expected moved to be true")
 	}
+
+	utils.ChangeToGoModDir()
+	wd, _ := os.Getwd()
+	os.RemoveAll(filepath.Join(wd, "test"))
 }
 
 func TestFoundCustomMove_Broken(t *testing.T) {
