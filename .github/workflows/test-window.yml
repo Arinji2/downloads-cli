@@ -3,9 +3,9 @@ name: Run Tests (Windows)
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ windows ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ windows ]
 
 jobs:
   test:
