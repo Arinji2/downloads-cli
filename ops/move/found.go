@@ -9,22 +9,22 @@ import (
 	"github.com/Arinji2/downloads-cli/utils"
 )
 
-func FoundDefaultMove(data store.StoredData, m *Move) (err error) {
+func FoundDefaultMove(data store.StoredData, m *Move) (moved bool, err error) {
 	data.InProgress = true
 	m.Operations.Store.UpdateStoredData(data.ID, data)
 	rawMoveType, err := utils.GetOperationType(data.Args[0])
 	if err != nil {
-		return err
+		return false, err
 	}
 	moveType := MoveType(rawMoveType)
 	if moveType != MoveMD {
-		return fmt.Errorf("invalid move type")
+		return false, fmt.Errorf("invalid move type")
 	}
 	fileName := data.Args[0]
 	originalPath := data.Args[1]
 	destPath := m.MovePresets[data.Args[2]]
 	if destPath == "" {
-		return fmt.Errorf("invalid move string for move default")
+		return false, fmt.Errorf("invalid move string for move default")
 	}
 	if !strings.HasSuffix(destPath, fileName) {
 		destPath = fmt.Sprintf("%s/%s", destPath, fileName)
@@ -32,25 +32,25 @@ func FoundDefaultMove(data store.StoredData, m *Move) (err error) {
 
 	m.Operations.Store.DeleteStoredData(data.ID)
 	if m.Operations.IsTesting {
-		return nil
+		return true, nil
 	}
 	err = os.Rename(originalPath, destPath)
 	if err != nil {
-		return err
+		return false, err
 	}
-	return nil
+	return true, nil
 }
 
-func FoundCustomMove(data store.StoredData, m *Move) (err error) {
+func FoundCustomMove(data store.StoredData, m *Move) (moved bool, err error) {
 	data.InProgress = true
 	m.Operations.Store.UpdateStoredData(data.ID, data)
 	rawMoveType, err := utils.GetOperationType(data.Args[0])
 	if err != nil {
-		return err
+		return false, err
 	}
 	moveType := MoveType(rawMoveType)
 	if moveType != MoveMC {
-		return fmt.Errorf("invalid move type")
+		return false, fmt.Errorf("invalid move type")
 	}
 	fileName := data.Args[0]
 	originalPath := data.Args[1]
@@ -61,11 +61,11 @@ func FoundCustomMove(data store.StoredData, m *Move) (err error) {
 
 	m.Operations.Store.DeleteStoredData(data.ID)
 	if m.Operations.IsTesting {
-		return nil
+		return true, nil
 	}
 	err = os.Rename(originalPath, destPath)
 	if err != nil {
-		return err
+		return false, err
 	}
-	return nil
+	return true, nil
 }
