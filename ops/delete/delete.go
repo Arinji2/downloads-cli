@@ -1,6 +1,8 @@
 package delete
 
 import (
+	"fmt"
+	"slices"
 	"time"
 
 	"github.com/Arinji2/downloads-cli/logger"
@@ -78,4 +80,27 @@ func (d *Delete) RunDeleteJobs() {
 			}
 		}
 	}
+}
+
+func (d *Delete) DeleteByFilename(fileName string) error {
+	data, err := d.Operations.Store.GetAllStoredData()
+	if err != nil {
+		logger.GLogger.AddToLog("ERROR", err.Error())
+		return err
+	}
+	foundData := slices.IndexFunc(data, func(data store.StoredData) bool {
+		fmt.Println(data.Args[0], fileName)
+		return data.Args[0] == fileName && !data.InProgress
+	})
+
+	if foundData == -1 {
+		return fmt.Errorf("no data found for path %s", fileName)
+	}
+	storeData := data[foundData]
+	err = d.Operations.Store.DeleteStoredData(storeData.ID)
+	if err != nil {
+		logger.GLogger.AddToLog("ERROR", err.Error())
+		return err
+	}
+	return nil
 }

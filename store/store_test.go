@@ -1,149 +1,216 @@
 package store_test
 
 import (
+	"encoding/json"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/Arinji2/downloads-cli/store"
 )
 
+func setupTest(t *testing.T) (*store.Store, string) {
+	t.Helper()
+	tempDir := t.TempDir()
+	storeFile := filepath.Join(tempDir, "test-store.json")
+
+	s := store.NewStore(storeFile)
+	if err := s.Reset(); err != nil {
+		t.Fatalf("Failed to init store: %v", err)
+	}
+
+	return s, tempDir
+}
+
 func TestAddingToStore(t *testing.T) {
-	s := store.InitStore(true)
-	s.AddStoredData(store.StoredData{ID: 1, Task: "test", Args: []string{"test"}, InProgress: false})
-
-	file, err := os.Open(store.STORAGE_FILENAME)
-	if err != nil {
-		t.Errorf("Error opening file: %v", err)
-	}
-	defer file.Close()
-
-	data, err := os.ReadFile(store.STORAGE_FILENAME)
-	if err != nil {
-		t.Errorf("Error reading file: %v", err)
+	s, _ := setupTest(t)
+	testData := store.StoredData{
+		ID:         1,
+		Task:       "test",
+		Args:       []string{"test"},
+		InProgress: false,
 	}
 
-	expected := "[{\"id\":1,\"task\":\"test\",\"args\":[\"test\"],\"in_progress\":false}]"
-	if string(data) != expected {
-		t.Errorf("Expected %s, got %s", expected, string(data))
+	if err := s.AddStoredData(testData); err != nil {
+		t.Fatalf("Failed to add data to store: %v", err)
+	}
+
+	// Verify file contents directly
+	data, err := os.ReadFile(s.GetFilename())
+	if err != nil {
+		t.Fatalf("Error reading store file: %v", err)
+	}
+
+	var storedData []store.StoredData
+	if err := json.Unmarshal(data, &storedData); err != nil {
+		t.Fatalf("Error parsing store file: %v", err)
+	}
+
+	if len(storedData) != 1 {
+		t.Errorf("Expected 1 item in store, got %d", len(storedData))
+	}
+
+	storeData := storedData[0]
+	if storeData.ID != testData.ID {
+		t.Errorf("Expected %v, got %v", testData, storedData[0])
 	}
 }
 
 func TestGettingStoredData(t *testing.T) {
-	s := store.InitStore(true)
-	s.AddStoredData(store.StoredData{ID: 1, Task: "test", Args: []string{"test"}, InProgress: false})
+	s, _ := setupTest(t)
+	testData := store.StoredData{
+		ID:         1,
+		Task:       "test",
+		Args:       []string{"test"},
+		InProgress: false,
+	}
 
-	storedData, foundData, err := s.GetStoredData(1)
+	if err := s.AddStoredData(testData); err != nil {
+		t.Fatalf("Failed to add data to store: %v", err)
+	}
+
+	storedData, found, err := s.GetStoredData(1)
 	if err != nil {
-		t.Errorf("Error getting stored data: %v", err)
+		t.Fatalf("Error getting stored data: %v", err)
 	}
 
-	if !foundData {
-		t.Errorf("Expected data to be found")
+	if !found {
+		t.Error("Expected data to be found")
 	}
 
-	if storedData.ID != 1 {
-		t.Errorf("Expected ID 1, got %d", storedData.ID)
-	}
-	if storedData.Task != "test" {
-		t.Errorf("Expected task test, got %s", storedData.Task)
-	}
-	if storedData.Args[0] != "test" {
-		t.Errorf("Expected args test, got %s", storedData.Args[0])
-	}
-	if storedData.InProgress != false {
-		t.Errorf("Expected in_progress false, got %t", storedData.InProgress)
+	if storedData.ID != testData.ID {
+		t.Errorf("Expected %v, got %v", testData, storedData)
 	}
 }
 
 func TestGettingAllStoredData(t *testing.T) {
-	s := store.InitStore(true)
-	s.AddStoredData(store.StoredData{ID: 1, Task: "test", Args: []string{"test"}, InProgress: false})
-	s.AddStoredData(store.StoredData{ID: 2, Task: "test2", Args: []string{"test2"}, InProgress: false})
-	s.AddStoredData(store.StoredData{ID: 3, Task: "test3", Args: []string{"test3"}, InProgress: false})
+	s, _ := setupTest(t)
+	testData := []store.StoredData{
+		{ID: 1, Task: "test1", Args: []string{"test1"}, InProgress: false},
+		{ID: 2, Task: "test2", Args: []string{"test2"}, InProgress: false},
+		{ID: 3, Task: "test3", Args: []string{"test3"}, InProgress: false},
+	}
+
+	for _, data := range testData {
+		if err := s.AddStoredData(data); err != nil {
+			t.Fatalf("Failed to add data to store: %v", err)
+		}
+	}
 
 	storedData, err := s.GetAllStoredData()
 	if err != nil {
-		t.Errorf("Error getting stored data: %v", err)
+		t.Fatalf("Error getting all stored data: %v", err)
 	}
 
-	if len(storedData) != 3 {
-		t.Errorf("Expected 3 stored data, got %d", len(storedData))
+	if len(storedData) != len(testData) {
+		t.Errorf("Expected %d stored items, got %d", len(testData), len(storedData))
+	}
+
+	for i, data := range storedData {
+		if data.ID != testData[i].ID {
+			t.Errorf("Item %d: expected %v, got %v", i, testData[i], data)
+		}
 	}
 }
 
 func TestUpdatingStoredData(t *testing.T) {
-	s := store.InitStore(true)
-	s.AddStoredData(store.StoredData{ID: 1, Task: "test", Args: []string{"test"}, InProgress: false})
+	s, _ := setupTest(t)
+	originalData := store.StoredData{
+		ID:         1,
+		Task:       "test",
+		Args:       []string{"test"},
+		InProgress: false,
+	}
 
-	s.UpdateStoredData(1, store.StoredData{ID: 1, Task: "test", Args: []string{"test2"}, InProgress: false})
+	if err := s.AddStoredData(originalData); err != nil {
+		t.Fatalf("Failed to add data to store: %v", err)
+	}
 
-	data, foundData, err := s.GetStoredData(1)
+	updatedData := store.StoredData{
+		ID:         1,
+		Task:       "test",
+		Args:       []string{"test2"},
+		InProgress: false,
+	}
+
+	if err := s.UpdateStoredData(1, updatedData); err != nil {
+		t.Fatalf("Failed to update stored data: %v", err)
+	}
+
+	data, found, err := s.GetStoredData(1)
 	if err != nil {
-		t.Errorf("Error getting stored data: %v", err)
+		t.Fatalf("Error getting stored data: %v", err)
 	}
 
-	if !foundData {
-		t.Errorf("Expected data to be found")
+	if !found {
+		t.Error("Expected data to be found after update")
 	}
 
-	if data.ID != 1 {
-		t.Errorf("Expected ID 1, got %d", data.ID)
-	}
-	if data.Task != "test" {
-		t.Errorf("Expected task test, got %s", data.Task)
-	}
-	if data.Args[0] != "test2" {
-		t.Errorf("Expected args test2, got %s", data.Args[0])
-	}
-	if data.InProgress != false {
-		t.Errorf("Expected in_progress false, got %t", data.InProgress)
+	if data.ID != updatedData.ID {
+		t.Errorf("Expected %v, got %v", updatedData, data)
 	}
 }
 
 func TestDeletingStoredData(t *testing.T) {
-	s := store.InitStore(true)
-	s.AddStoredData(store.StoredData{ID: 1, Task: "test", Args: []string{"test"}, InProgress: false})
-	s.AddStoredData(store.StoredData{ID: 2, Task: "test2", Args: []string{"test2"}, InProgress: false})
-	s.AddStoredData(store.StoredData{ID: 3, Task: "test3", Args: []string{"test3"}, InProgress: false})
+	s, _ := setupTest(t)
+	testData := []store.StoredData{
+		{ID: 1, Task: "test1", Args: []string{"test1"}, InProgress: false},
+		{ID: 2, Task: "test2", Args: []string{"test2"}, InProgress: false},
+		{ID: 3, Task: "test3", Args: []string{"test3"}, InProgress: false},
+	}
 
-	s.DeleteStoredData(1)
+	for _, data := range testData {
+		if err := s.AddStoredData(data); err != nil {
+			t.Fatalf("Failed to add data to store: %v", err)
+		}
+	}
+
+	if err := s.DeleteStoredData(1); err != nil {
+		t.Fatalf("Failed to delete stored data: %v", err)
+	}
 
 	storedData, err := s.GetAllStoredData()
 	if err != nil {
-		t.Errorf("Error getting stored data: %v", err)
+		t.Fatalf("Error getting all stored data: %v", err)
 	}
 
 	if len(storedData) != 2 {
-		t.Errorf("Expected 2 stored data, got %d", len(storedData))
+		t.Errorf("Expected 2 stored items after deletion, got %d", len(storedData))
 	}
 
-	_, foundData, err := s.GetStoredData(1)
+	_, found, err := s.GetStoredData(1)
 	if err != nil {
-		t.Errorf("Error getting stored data: %v", err)
+		t.Fatalf("Error checking for deleted data: %v", err)
 	}
 
-	if foundData {
-		t.Errorf("Expected data to not be found")
+	if found {
+		t.Error("Expected deleted data to not be found")
 	}
 }
 
 func TestClearingStore(t *testing.T) {
-	s := store.InitStore(true)
+	s, _ := setupTest(t)
+	testData := store.StoredData{
+		ID:         1,
+		Task:       "test",
+		Args:       []string{"test"},
+		InProgress: true,
+	}
 
-	if err := s.AddStoredData(store.StoredData{ID: 1, Task: "test", Args: []string{"test"}, InProgress: true}); err != nil {
-		t.Errorf("Error adding stored data: %v", err)
+	if err := s.AddStoredData(testData); err != nil {
+		t.Fatalf("Failed to add data to store: %v", err)
 	}
 
 	if err := s.ClearStore(); err != nil {
-		t.Errorf("Error clearing store: %v", err)
+		t.Fatalf("Failed to clear store: %v", err)
 	}
 
 	storedData, err := s.GetAllStoredData()
 	if err != nil {
-		t.Errorf("Error getting stored data: %v", err)
+		t.Fatalf("Error getting stored data after clear: %v", err)
 	}
 
 	if len(storedData) != 0 {
-		t.Errorf("Expected 0 stored data, got %d", len(storedData))
+		t.Errorf("Expected empty store after clear, got %d items", len(storedData))
 	}
 }

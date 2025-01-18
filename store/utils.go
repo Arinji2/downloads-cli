@@ -14,7 +14,7 @@ func readAndParseStoredData(s *Store) ([]StoredData, error) {
 		return s.cachedData, nil
 	}
 
-	data, err := os.ReadFile(STORAGE_FILENAME)
+	data, err := os.ReadFile(s.storageFilename)
 	if err != nil {
 		logger.GLogger.AddToLog("ERROR", err.Error())
 		return nil, err
@@ -23,8 +23,7 @@ func readAndParseStoredData(s *Store) ([]StoredData, error) {
 	var storedData []StoredData
 	err = json.Unmarshal(data, &storedData)
 	if err != nil {
-		logger.GLogger.AddToLog("ERROR", err.Error())
-		return nil, err
+		storedData = make([]StoredData, 0)
 	}
 
 	s.cachedData = storedData

@@ -3,19 +3,17 @@ package delete_test
 import (
 	"testing"
 
-	"github.com/Arinji2/downloads-cli/ops"
 	"github.com/Arinji2/downloads-cli/ops/delete"
-	"github.com/Arinji2/downloads-cli/store"
 )
 
 func TestNewDeleteRegistered(t *testing.T) {
-	s := store.InitStore(true)
-	ops := ops.InitTestingOperations("DELETE", s)
+	s, tempDir, ops := setupTest(t)
+
+	fileName, testFile, _ := setupFS(t, tempDir, "test", "1d")
 	deleteJob := delete.InitDelete(ops, 0)
 
-	err := deleteJob.NewDeleteRegistered("d-10s-test1.txt", "/tmp/d-10s-test1.txt")
-	if err != nil {
-		t.Error(err)
+	if err := deleteJob.NewDeleteRegistered(fileName, testFile); err != nil {
+		t.Fatalf("Failed to register new move: %v", err)
 	}
 
 	storedData, err := s.GetAllStoredData()
