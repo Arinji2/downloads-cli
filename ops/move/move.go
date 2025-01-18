@@ -12,7 +12,7 @@ import (
 
 var (
 	DEFAULT_MOVE_INTERVAL = 30
-	CUSTOM_MOVE_SEPERATOR = "_"
+	CUSTOM_MOVE_SEPERATOR = "("
 )
 
 type MoveType string
