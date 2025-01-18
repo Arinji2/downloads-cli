@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
 
@@ -32,20 +31,9 @@ func setupFS(t *testing.T, tempDir, moveType, name string) (fileName, testFile, 
 			t.Fatalf("Failed to get absolute path: %v", err)
 		}
 
-		// Remove volume name on Windows
-		if runtime.GOOS == "windows" {
-			vol := filepath.VolumeName(absDestPath)
-			if vol != "" {
-				absDestPath = absDestPath[len(vol):]
-			}
-		}
-
-		// Clean the path and replace separators
-		absDestPath = filepath.ToSlash(absDestPath) // Convert to forward slashes
-		if runtime.GOOS == "windows" {
-			formattedDestPath = strings.TrimPrefix(absDestPath, "/") // Remove leading slash
-		}
-		formattedDestPath = strings.ReplaceAll(formattedDestPath, "/", move.CUSTOM_MOVE_SEPERATOR)
+		// Convert to forward slashes and replace with custom separator
+		absDestPath = filepath.ToSlash(absDestPath)
+		formattedDestPath = strings.ReplaceAll(absDestPath, "/", move.CUSTOM_MOVE_SEPERATOR)
 	default:
 		t.Fatalf("Invalid move type: %s", moveType)
 	}
