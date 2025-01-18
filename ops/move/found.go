@@ -62,6 +62,7 @@ func FoundCustomMove(data store.StoredData, m *Move) (moved bool, err error) {
 	m.Operations.Store.DeleteStoredData(data.ID)
 	fmt.Println("3] DESTPATH", destPath)
 	fmt.Println("3] FILENAME", fileName)
+	fmt.Println("3] OriginalPath", originalPath)
 	err = os.Rename(originalPath, destPath)
 	if err != nil {
 		return false, err
