@@ -1,0 +1,81 @@
+name: Test and Release
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  release:
+    types: [created]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        go-version: ['1.23.4']
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ matrix.go-version }}
+    
+    - name: Install dependencies
+      run: go mod download
+    
+    - name: Run tests
+      shell: bash
+      run: go test -v -count=1 ./...
+
+  build:
+    needs: test
+    if: github.event_name == 'release'
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            arch: amd64
+          - os: macos-latest
+            platform: darwin
+            arch: amd64
+          - os: windows-latest
+            platform: windows
+            arch: amd64
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.23.4'
+    
+    - name: Install dependencies
+      run: go mod download
+    
+    - name: Build
+      env:
+        GOOS: ${{ matrix.platform }}
+        GOARCH: ${{ matrix.arch }}
+      run: |
+        # Adjust the output name based on OS
+        if [ "${{ matrix.platform }}" == "windows" ]; then
+          go build -v -o bin/downloads-cli.exe
+        else
+          go build -v -o bin/downloads-cli
+        fi
+      shell: bash
+    
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./bin/downloads-cli${{ matrix.platform == 'windows' && '.exe' || '' }}
+        asset_name: downloads-cli-${{ matrix.platform }}-${{ matrix.arch }}${{ matrix.platform == 'windows' && '.exe' || '' }}
+        asset_content_type: application/octet-stream
