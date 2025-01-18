@@ -49,7 +49,7 @@ func verifyMove(fileName string, m *Move) (err error) {
 
 func CreateDestinationPath(rawPath string) string {
 	var destPath string
-	destPath = strings.ReplaceAll(rawPath, "[", "/")
+	destPath = strings.ReplaceAll(rawPath, "[", string(os.PathSeparator))
 	homeDir, _ := os.UserHomeDir()
 	destPath = strings.ReplaceAll(destPath, "~", homeDir)
 	return destPath
