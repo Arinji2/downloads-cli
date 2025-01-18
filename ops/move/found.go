@@ -3,6 +3,7 @@ package move
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/Arinji2/downloads-cli/store"
@@ -53,7 +54,7 @@ func FoundCustomMove(data store.StoredData, m *Move) (moved bool, err error) {
 	originalPath := data.Args[1]
 	destPath := data.Args[2]
 	if !strings.HasSuffix(destPath, fileName) {
-		destPath = fmt.Sprintf("%s/%s", destPath, fileName)
+		destPath = filepath.Join(destPath, fileName)
 	}
 	m.Operations.Store.DeleteStoredData(data.ID)
 	err = os.Rename(originalPath, destPath)
