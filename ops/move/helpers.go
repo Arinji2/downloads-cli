@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/Arinji2/downloads-cli/logger"
@@ -60,6 +61,8 @@ func CreateDestinationPath(rawPath string) string {
 			destPath = filepath.Join(homeDir, destPath[1:])
 		}
 	}
-
+	if runtime.GOOS == "windows" {
+		destPath = strings.ReplaceAll(destPath, ":", "_")
+	}
 	return filepath.Clean(destPath)
 }
