@@ -28,7 +28,7 @@ func setupFS(t *testing.T, tempDir, moveType, name string) (fileName, testFile, 
 		t.Fatalf("Failed to create test directory: %v", err)
 	}
 
-	formattedDestPath := strings.ReplaceAll(destPath, "/", "[")
+	formattedDestPath := strings.ReplaceAll(destPath, string(os.PathSeparator), "[")
 	if moveType == "md" {
 		formattedDestPath = "test"
 	}
