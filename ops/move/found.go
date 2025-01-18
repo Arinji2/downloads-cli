@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/Arinji2/downloads-cli/store"
@@ -63,6 +64,16 @@ func FoundCustomMove(data store.StoredData, m *Move) (moved bool, err error) {
 	fmt.Println("3] DESTPATH", destPath)
 	fmt.Println("3] FILENAME", fileName)
 	fmt.Println("3] OriginalPath", originalPath)
+
+	if runtime.GOOS == "windows" {
+		firstIndex := strings.Index(destPath, ":")
+		beforeMount := destPath[:firstIndex]
+		afterMount := destPath[firstIndex:]
+		println("1] BeforeMount", beforeMount)
+		println("1] AfterMount", afterMount)
+		afterMount = strings.ReplaceAll(afterMount, ":", "_")
+		destPath = beforeMount + afterMount
+	}
 	err = os.Rename(originalPath, destPath)
 	if err != nil {
 		return false, err
