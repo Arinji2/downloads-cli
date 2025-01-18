@@ -11,6 +11,7 @@ import (
 	"github.com/Arinji2/downloads-cli/ops"
 	"github.com/Arinji2/downloads-cli/ops/move"
 	"github.com/Arinji2/downloads-cli/store"
+	"github.com/Arinji2/downloads-cli/utils"
 )
 
 // setupFS creates necessary test files and directories
@@ -25,6 +26,8 @@ func setupFS(t *testing.T, tempDir, moveType, name string) (fileName, testFile, 
 	default:
 		t.Fatalf("Invalid move type: %s", moveType)
 	}
+	destPath = utils.WindowsMountIssue(destPath)
+	fmt.Println("10] DESTPATH", destPath)
 	if err := os.MkdirAll(destPath, 0755); err != nil {
 		t.Fatalf("Failed to create test directory: %v", err)
 	}

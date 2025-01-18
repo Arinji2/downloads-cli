@@ -66,21 +66,8 @@ func FoundCustomMove(data store.StoredData, m *Move) (moved bool, err error) {
 	fmt.Println("3] OriginalPath", originalPath)
 
 	if runtime.GOOS == "windows" {
-		firstIndex := (strings.Index(originalPath, ":")) + 1
-		beforeMount := originalPath[:firstIndex]
-		afterMount := originalPath[firstIndex:]
-		println("1] BeforeMount", beforeMount)
-		println("1] AfterMount", afterMount)
-		afterMount = strings.ReplaceAll(afterMount, ":", "_")
-		originalPath = beforeMount + afterMount
-
-		firstIndex = (strings.Index(destPath, ":")) + 1
-		beforeMount = destPath[:firstIndex]
-		afterMount = destPath[firstIndex:]
-		println("1] BeforeMount", beforeMount)
-		println("1] AfterMount", afterMount)
-		afterMount = strings.ReplaceAll(afterMount, ":", "_")
-		destPath = beforeMount + afterMount
+		originalPath = utils.WindowsMountIssue(originalPath)
+		destPath = utils.WindowsMountIssue(destPath)
 	}
 	err = os.Rename(originalPath, destPath)
 	if err != nil {
