@@ -7,27 +7,31 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/Arinji2/downloads-cli/logger"
 	"github.com/Arinji2/downloads-cli/utils"
 )
 
 func verifyMove(fileName string, m *Move) (err error) {
+	fmt.Printf("Verifying move for file: %s\n", fileName)
+
 	parts := strings.Split(fileName, ".")
 	if len(parts) < 2 {
-		logger.GLogger.AddToLog("ERROR", "invalid file name for move")
 		return fmt.Errorf("invalid file name for move")
 	}
 
 	nameParts := strings.Split(parts[0], "-")
+	fmt.Printf("Name parts: %v\n", nameParts)
+
 	if len(nameParts) < 3 {
 		return fmt.Errorf("invalid file name for move")
 	}
+
+	moveStr := nameParts[1]
+	fmt.Printf("Move string: %s\n", moveStr)
+
 	rawMoveType, err := utils.GetOperationType(fileName)
 	if err != nil {
 		return err
 	}
-
-	moveStr := nameParts[1]
 	moveType := MoveType(rawMoveType)
 	switch moveType {
 	case MoveMD:
@@ -37,7 +41,9 @@ func verifyMove(fileName string, m *Move) (err error) {
 		return nil
 	case MoveMC:
 		destPath := CreateDestinationPath(moveStr)
+		fmt.Printf("Created destination path: %s\n", destPath)
 		currentDir, _ := os.Getwd()
+		fmt.Printf("Current directory: %s\n", currentDir)
 		destPath = filepath.Clean(destPath)
 		checkCustomDirExists := os.Chdir(destPath)
 		os.Chdir(currentDir)
