@@ -12,7 +12,6 @@ import (
 	"github.com/Arinji2/downloads-cli/ops"
 	"github.com/Arinji2/downloads-cli/ops/move"
 	"github.com/Arinji2/downloads-cli/store"
-	"github.com/Arinji2/downloads-cli/utils"
 )
 
 // setupFS creates necessary test files and directories
@@ -37,7 +36,7 @@ func setupFS(t *testing.T, tempDir, moveType, name string) (fileName, testFile, 
 		formattedDestPath = "test"
 	}
 	if runtime.GOOS == "windows" {
-		formattedDestPath = utils.WindowsMountIssue(formattedDestPath)
+		formattedDestPath = strings.Replace(formattedDestPath, ":", "_", 1)
 		fmt.Println("11] FORMATTED DEST PATH", formattedDestPath)
 	}
 
