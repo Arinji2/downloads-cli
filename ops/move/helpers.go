@@ -50,15 +50,8 @@ func verifyMove(fileName string, m *Move) (err error) {
 }
 
 func CreateDestinationPath(rawPath string) string {
-	// First, preserve the drive letter if on Windows
-	var drivePrefix string
-	if len(rawPath) > 1 && rawPath[1] == ':' {
-		drivePrefix = rawPath[:3] // Include "C:\"
-		rawPath = rawPath[3:]     // Rest of the path
-	}
-
-	// Do the separator replacement on the rest of the path
-	destPath := strings.ReplaceAll(rawPath, CUSTOM_MOVE_SEPERATOR, string(os.PathSeparator))
+	var destPath string
+	destPath = strings.ReplaceAll(rawPath, CUSTOM_MOVE_SEPERATOR, string(os.PathSeparator))
 
 	// Handle home directory expansion
 	if strings.HasPrefix(destPath, "~") {
@@ -66,11 +59,6 @@ func CreateDestinationPath(rawPath string) string {
 		if err == nil {
 			destPath = filepath.Join(homeDir, destPath[1:])
 		}
-	}
-
-	// Recombine with drive letter if present
-	if drivePrefix != "" {
-		destPath = drivePrefix + destPath
 	}
 
 	return filepath.Clean(destPath)
