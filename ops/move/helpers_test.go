@@ -17,26 +17,22 @@ import (
 func setupFS(t *testing.T, tempDir, moveType, name string) (fileName, testFile, destPath string) {
 	t.Helper()
 
-	destPath = filepath.Join(tempDir, "test")
+	switch moveType {
+	case "md":
+		destPath = filepath.Join(tempDir, "test")
+	case "mc":
+		destPath = filepath.Join(tempDir, "test")
+	default:
+		t.Fatalf("Invalid move type: %s", moveType)
+	}
 	if err := os.MkdirAll(destPath, 0755); err != nil {
 		t.Fatalf("Failed to create test directory: %v", err)
 	}
 
-	var formattedDestPath string
-	switch moveType {
-	case "md":
+	formattedDestPath := strings.ReplaceAll(destPath, string(os.PathSeparator), move.CUSTOM_MOVE_SEPERATOR)
+	if moveType == "md" {
 		formattedDestPath = "test"
-	case "mc":
-		// For custom moves, we need the full absolute path
-		absDestPath, err := filepath.Abs(destPath)
-		if err != nil {
-			t.Fatalf("Failed to get absolute path: %v", err)
-		}
-		formattedDestPath = strings.ReplaceAll(absDestPath, string(os.PathSeparator), move.CUSTOM_MOVE_SEPERATOR)
-	default:
-		t.Fatalf("Invalid move type: %s", moveType)
 	}
-
 	fileName = fmt.Sprintf("%s-%s-%s.txt", moveType, formattedDestPath, name)
 	testFile = filepath.Join(tempDir, fileName)
 	if err := os.WriteFile(testFile, []byte("test"), 0644); err != nil {
