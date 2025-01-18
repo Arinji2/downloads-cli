@@ -53,7 +53,6 @@ func (s *Store) Reset() error {
 	s.cachedDataMutex.Lock()
 	defer s.cachedDataMutex.Unlock()
 
-	println(s.storageFilename)
 	file, err := os.Create(s.storageFilename)
 	if err != nil {
 		return fmt.Errorf("failed to create storage file: %w", err)
