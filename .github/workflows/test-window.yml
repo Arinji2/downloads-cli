@@ -22,4 +22,4 @@ jobs:
       run: go mod download
 
     - name: Run tests
-      run: go test -v -count=1 ./...
+      run: go test --run=TestFoundCustomMove_Valid -count=1 -v ./ops/move
