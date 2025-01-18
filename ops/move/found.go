@@ -29,7 +29,7 @@ func FoundDefaultMove(data store.StoredData, m *Move) (moved bool, err error) {
 		return false, fmt.Errorf("invalid move string for move default")
 	}
 	if !strings.HasSuffix(destPath, fileName) {
-		destPath = fmt.Sprintf("%s/%s", destPath, fileName)
+		destPath = filepath.Join(destPath, fileName)
 	}
 
 	err = os.Rename(originalPath, destPath)
