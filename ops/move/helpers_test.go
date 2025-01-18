@@ -35,6 +35,7 @@ func setupFS(t *testing.T, tempDir, moveType, name string) (fileName, testFile, 
 	if moveType == "md" {
 		formattedDestPath = "test"
 	}
+	copyOfDestPath := formattedDestPath
 	if runtime.GOOS == "windows" {
 		formattedDestPath = strings.Replace(formattedDestPath, ":", "_", 1)
 		fmt.Println("11] FORMATTED DEST PATH", formattedDestPath)
@@ -45,7 +46,10 @@ func setupFS(t *testing.T, tempDir, moveType, name string) (fileName, testFile, 
 	if err := os.WriteFile(testFile, []byte("test"), 0644); err != nil {
 		t.Fatalf("Failed to create test file: %v", err)
 	}
-
+	if runtime.GOOS == "windows" {
+		fileName = fmt.Sprintf("%s-%s-%s.txt", moveType, copyOfDestPath, name)
+		testFile = filepath.Join(tempDir, fileName)
+	}
 	return fileName, testFile, destPath
 }
 
