@@ -89,7 +89,6 @@ func (d *Delete) DeleteByFilename(fileName string) error {
 		return err
 	}
 	foundData := slices.IndexFunc(data, func(data store.StoredData) bool {
-		fmt.Println(data.Args[0], fileName)
 		return data.Args[0] == fileName && !data.InProgress
 	})
 

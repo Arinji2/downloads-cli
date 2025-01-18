@@ -10,7 +10,10 @@ import (
 	"github.com/Arinji2/downloads-cli/store"
 )
 
-var DEFAULT_MOVE_INTERVAL = 30
+var (
+	DEFAULT_MOVE_INTERVAL = 30
+	CUSTOM_MOVE_SEPERATOR = "("
+)
 
 type MoveType string
 

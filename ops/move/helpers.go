@@ -51,7 +51,7 @@ func verifyMove(fileName string, m *Move) (err error) {
 
 func CreateDestinationPath(rawPath string) string {
 	var destPath string
-	destPath = strings.ReplaceAll(rawPath, "[", string(os.PathSeparator))
+	destPath = strings.ReplaceAll(rawPath, CUSTOM_MOVE_SEPERATOR, string(os.PathSeparator))
 
 	// Handle home directory expansion
 	if strings.HasPrefix(destPath, "~") {

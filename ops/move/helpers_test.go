@@ -9,6 +9,7 @@ import (
 
 	"github.com/Arinji2/downloads-cli/logger"
 	"github.com/Arinji2/downloads-cli/ops"
+	"github.com/Arinji2/downloads-cli/ops/move"
 	"github.com/Arinji2/downloads-cli/store"
 )
 
@@ -28,7 +29,7 @@ func setupFS(t *testing.T, tempDir, moveType, name string) (fileName, testFile, 
 		t.Fatalf("Failed to create test directory: %v", err)
 	}
 
-	formattedDestPath := strings.ReplaceAll(destPath, string(os.PathSeparator), "[")
+	formattedDestPath := strings.ReplaceAll(destPath, string(os.PathSeparator), move.CUSTOM_MOVE_SEPERATOR)
 	if moveType == "md" {
 		formattedDestPath = "test"
 	}
