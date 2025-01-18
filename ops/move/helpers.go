@@ -3,6 +3,7 @@ package move
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/Arinji2/downloads-cli/logger"
@@ -36,6 +37,7 @@ func verifyMove(fileName string, m *Move) (err error) {
 	case MoveMC:
 		destPath := CreateDestinationPath(moveStr)
 		currentDir, _ := os.Getwd()
+		destPath = filepath.Clean(destPath)
 		checkCustomDirExists := os.Chdir(destPath)
 		os.Chdir(currentDir)
 		if checkCustomDirExists != nil {
@@ -50,7 +52,14 @@ func verifyMove(fileName string, m *Move) (err error) {
 func CreateDestinationPath(rawPath string) string {
 	var destPath string
 	destPath = strings.ReplaceAll(rawPath, "[", string(os.PathSeparator))
-	homeDir, _ := os.UserHomeDir()
-	destPath = strings.ReplaceAll(destPath, "~", homeDir)
-	return destPath
+
+	// Handle home directory expansion
+	if strings.HasPrefix(destPath, "~") {
+		homeDir, err := os.UserHomeDir()
+		if err == nil {
+			destPath = filepath.Join(homeDir, destPath[1:])
+		}
+	}
+
+	return filepath.Clean(destPath)
 }
