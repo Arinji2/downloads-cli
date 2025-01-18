@@ -1,0 +1,27 @@
+
+project_name: downloads-cli
+builds:
+  - goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    output: "bin/{{ .Os }}-{{ .Arch }}/{{ .ProjectName }}{{ if eq .Os \"windows\" }}.exe{{ end }}"
+    env:
+      - CGO_ENABLED=0
+
+archives:
+  - format: tar.gz
+    files:
+      - LICENSE
+      - README.md
+      - bin/
+
+release:
+  github:
+    prerelease: auto
+
+changelog:
+  use: git
