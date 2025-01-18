@@ -2,6 +2,7 @@ package watcher
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -24,28 +25,29 @@ type WatcherLog struct {
 }
 
 func (w *WatcherLog) FileCreated(path string) {
-	filename := strings.Split(path, "/")[len(strings.Split(path, "/"))-1]
-	logger.GLogger.Notify(fmt.Sprintf("Created File %s", filename))
-	operationType, err := utils.GetOperationType(filename)
+	fileParts := strings.Split(path, string(os.PathSeparator))
+	fileName := fileParts[len(fileParts)-1]
+	logger.GLogger.Notify(fmt.Sprintf("Created File %s", fileName))
+	operationType, err := utils.GetOperationType(fileName)
 	if err != nil {
 		logger.GLogger.AddToLog("ERROR", err.Error())
 		return
 	}
 	switch operationType {
 	case "d":
-		err := w.DeleteJobs.NewDeleteRegistered(filename, path)
+		err := w.DeleteJobs.NewDeleteRegistered(fileName, path)
 		if err != nil {
 			err = fmt.Errorf("error creating delete job: %v", err)
 			logger.GLogger.AddToLog("ERROR", err.Error())
 		}
 	case "md":
-		err := w.MoveJobs.NewMoveRegistered(filename, path)
+		err := w.MoveJobs.NewMoveRegistered(fileName, path)
 		if err != nil {
 			err = fmt.Errorf("error creating move preset job: %v", err)
 			logger.GLogger.AddToLog("ERROR", err.Error())
 		}
 	case "mc":
-		err := w.MoveJobs.NewMoveRegistered(filename, path)
+		err := w.MoveJobs.NewMoveRegistered(fileName, path)
 		if err != nil {
 			err = fmt.Errorf("error creating move custom job: %v", err)
 			logger.GLogger.AddToLog("ERROR", err.Error())
