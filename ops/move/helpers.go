@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	"github.com/Arinji2/downloads-cli/logger"
@@ -51,17 +50,17 @@ func verifyMove(fileName string, m *Move) (err error) {
 }
 
 func CreateDestinationPath(rawPath string) string {
-	// Handle Windows drive letter if present (e.g., C:)
+	// First, preserve the drive letter if on Windows
 	var drivePrefix string
-	if runtime.GOOS == "windows" && len(rawPath) > 1 && rawPath[1] == ':' {
-		drivePrefix = rawPath[:3] // Preserve "C:\"
-		rawPath = rawPath[3:]
+	if len(rawPath) > 1 && rawPath[1] == ':' {
+		drivePrefix = rawPath[:3] // Include "C:\"
+		rawPath = rawPath[3:]     // Rest of the path
 	}
 
-	// Convert the path separators
+	// Do the separator replacement on the rest of the path
 	destPath := strings.ReplaceAll(rawPath, CUSTOM_MOVE_SEPERATOR, string(os.PathSeparator))
 
-	// Handle home directory
+	// Handle home directory expansion
 	if strings.HasPrefix(destPath, "~") {
 		homeDir, err := os.UserHomeDir()
 		if err == nil {
@@ -69,7 +68,7 @@ func CreateDestinationPath(rawPath string) string {
 		}
 	}
 
-	// Recombine with drive letter if on Windows
+	// Recombine with drive letter if present
 	if drivePrefix != "" {
 		destPath = drivePrefix + destPath
 	}
