@@ -30,15 +30,10 @@ func setupFS(t *testing.T, tempDir, moveType, name string) (fileName, testFile, 
 		if err != nil {
 			t.Fatalf("Failed to get absolute path: %v", err)
 		}
-		t.Logf("Original absolute path: %s", absDestPath)
 
+		// Convert to forward slashes and replace with custom separator
 		absDestPath = filepath.ToSlash(absDestPath)
-		t.Logf("After ToSlash: %s", absDestPath)
-
 		formattedDestPath = strings.ReplaceAll(absDestPath, "/", move.CUSTOM_MOVE_SEPERATOR)
-		t.Logf("After separator replacement: %s", formattedDestPath)
-
-		t.Logf("Final formatted path: %s", formattedDestPath)
 	default:
 		t.Fatalf("Invalid move type: %s", moveType)
 	}
