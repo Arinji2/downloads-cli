@@ -46,8 +46,6 @@ func WindowsMountIssue(inputString string) string {
 	firstIndex := (strings.Index(inputString, ":")) + 1
 	beforeMount := inputString[:firstIndex]
 	afterMount := inputString[firstIndex:]
-	println("1] BeforeMount", beforeMount)
-	println("1] AfterMount", afterMount)
 	afterMount = strings.ReplaceAll(afterMount, ":", "_")
 	return beforeMount + afterMount
 }

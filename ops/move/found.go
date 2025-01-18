@@ -54,17 +54,10 @@ func FoundCustomMove(data store.StoredData, m *Move) (moved bool, err error) {
 	fileName := data.Args[0]
 	originalPath := data.Args[1]
 	destPath := data.Args[2]
-	fmt.Println("2] DESTPATH", destPath)
-	fmt.Println("2] FILENAME", fileName)
-	fmt.Println("2] HasSuffix", strings.HasSuffix(destPath, fileName))
 	if !strings.HasSuffix(destPath, fileName) {
 		destPath = filepath.Join(destPath, fileName)
 	}
 	m.Operations.Store.DeleteStoredData(data.ID)
-	fmt.Println("3] DESTPATH", destPath)
-	fmt.Println("3] FILENAME", fileName)
-	fmt.Println("3] OriginalPath", originalPath)
-
 	if runtime.GOOS == "windows" {
 		originalPath = utils.WindowsMountIssue(originalPath)
 		destPath = utils.WindowsMountIssue(destPath)

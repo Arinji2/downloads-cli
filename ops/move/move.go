@@ -41,7 +41,6 @@ func InitMove(o *ops.Operation, interval int, movePresets map[string]string) *Mo
 
 func (m *Move) NewMoveRegistered(fileName string, pathName string) error {
 	err := verifyMove(fileName, m)
-	fmt.Println("FILENAME", fileName)
 	destPath := CreateDestinationPath(strings.Split(fileName, "-")[1])
 	if err != nil {
 		return err
@@ -50,9 +49,6 @@ func (m *Move) NewMoveRegistered(fileName string, pathName string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("FILENAME", fileName)
-	fmt.Println("PATHNAME", pathName)
-	fmt.Println("DESTPATH", destPath)
 	storeFile := store.StoredData{
 		ID:   id,
 		Task: "MOVE",

@@ -26,7 +26,6 @@ func setupFS(t *testing.T, tempDir, moveType, name string) (fileName, testFile, 
 	default:
 		t.Fatalf("Invalid move type: %s", moveType)
 	}
-	fmt.Println("10] DESTPATH", destPath)
 	if err := os.MkdirAll(destPath, 0755); err != nil {
 		t.Fatalf("Failed to create test directory: %v", err)
 	}
@@ -38,7 +37,6 @@ func setupFS(t *testing.T, tempDir, moveType, name string) (fileName, testFile, 
 	copyOfDestPath := formattedDestPath
 	if runtime.GOOS == "windows" {
 		formattedDestPath = strings.Replace(formattedDestPath, ":", "_", 1)
-		fmt.Println("11] FORMATTED DEST PATH", formattedDestPath)
 	}
 
 	fileName = fmt.Sprintf("%s-%s-%s.txt", moveType, formattedDestPath, name)
