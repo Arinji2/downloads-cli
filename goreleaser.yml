@@ -7,7 +7,6 @@ builds:
       - windows
     goarch:
       - amd64
-      - arm64
     output: "bin/{{ .Os }}-{{ .Arch }}/{{ .ProjectName }}{{ if eq .Os \"windows\" }}.exe{{ end }}"
     env:
       - CGO_ENABLED=0
