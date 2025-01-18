@@ -4,54 +4,79 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Arinji2/downloads-cli/ops"
 	"github.com/Arinji2/downloads-cli/ops/delete"
-	"github.com/Arinji2/downloads-cli/store"
 )
 
-func TestFoundDelete(t *testing.T) {
-	s := store.InitStore(true)
-	ops := ops.InitTestingOperations("DELETE", s)
+func TestFoundDelete_Valid(t *testing.T) {
+	s, tempDir, ops := setupTest(t)
+
+	fileName, testFile, _ := setupFS(t, tempDir, "test", "1s")
 	deleteJob := delete.InitDelete(ops, 0)
 
-	err := deleteJob.NewDeleteRegistered("d-1s-test2.txt", "/tmp/d-1s-test2.txt")
-	if err != nil {
-		t.Error(err)
+	if err := deleteJob.NewDeleteRegistered(fileName, testFile); err != nil {
+		t.Fatalf("Failed to register new move: %v", err)
 	}
 
 	data, err := s.GetAllStoredData()
 	if err != nil {
-		t.Error(err)
+		t.Fatalf("Failed to get stored data: %v", err)
 	}
 	if len(data) != 1 {
-		t.Error("Expected 1 stored data, got ", len(data))
+		t.Fatalf("Expected 1 stored data, got %d", len(data))
 	}
 
-	data, err = s.GetAllStoredData()
+	deleted, err := delete.FoundDelete(data[0], deleteJob)
 	if err != nil {
-		t.Error(err)
+		t.Fatalf("FoundDelete failed: %v", err)
 	}
-	if len(data) != 1 {
-		t.Error("Expected 1 stored data, got ", len(data))
-	}
-
-	fileData := data[0]
-	deleted, err := delete.FoundDelete(fileData, deleteJob)
-	if err != nil {
-		t.Error(err)
-	}
-
 	if deleted {
-		t.Error("Expected Deleted to be false, got true")
+		t.Error("Expected Deleted to be false")
 	}
 
 	time.Sleep(time.Second * 1)
-	deleted, err = delete.FoundDelete(fileData, deleteJob)
+	deleted, err = delete.FoundDelete(data[0], deleteJob)
 	if err != nil {
 		t.Error(err)
 	}
 
 	if !deleted {
-		t.Error("Expected Deleted to be true, got false")
+		t.Error("Expected Deleted to be true")
+	}
+}
+
+func TestFoundDelete_Invalid(t *testing.T) {
+	s, tempDir, ops := setupTest(t)
+
+	fileName, testFile, _ := setupFS(t, tempDir, "test", "2s")
+	deleteJob := delete.InitDelete(ops, 0)
+
+	if err := deleteJob.NewDeleteRegistered(fileName, testFile); err != nil {
+		t.Fatalf("Failed to register new move: %v", err)
+	}
+
+	data, err := s.GetAllStoredData()
+	if err != nil {
+		t.Fatalf("Failed to get stored data: %v", err)
+	}
+	if len(data) != 1 {
+		t.Fatalf("Expected 1 stored data, got %d", len(data))
+	}
+
+	deleted, err := delete.FoundDelete(data[0], deleteJob)
+	if err != nil {
+		t.Fatalf("FoundDelete failed: %v", err)
+	}
+	if deleted {
+		t.Error("Expected Deleted to be false")
+	}
+
+	time.Sleep(time.Second * 1)
+	deleted, err = delete.FoundDelete(data[0], deleteJob)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if deleted {
+		t.Error("Expected Deleted to be true")
 	}
 }
