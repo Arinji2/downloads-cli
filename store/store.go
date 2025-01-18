@@ -10,7 +10,7 @@ import (
 	"github.com/Arinji2/downloads-cli/utils"
 )
 
-var STORAGE_FILENAME = "store.json"
+var DEFAULT_STORAGE_FILENAME = "store.json"
 
 type Store struct {
 	storageFilename string
@@ -25,32 +25,52 @@ type StoredData struct {
 	InProgress bool     `json:"in_progress"`
 }
 
-func InitStore(reset bool) *Store {
-	utils.ChangeToGoModDir()
-	_, err := os.Stat(STORAGE_FILENAME)
-	if err != nil || os.IsNotExist(err) || reset {
-		file, err := os.Create(STORAGE_FILENAME)
-		if err != nil {
-			logger.GLogger.AddToLog("FATAL", err.Error())
-			logger.GLogger.Notify("Fatal Error in InitStore")
-			os.Exit(1)
-		}
-		if _, err := file.WriteString("[]"); err != nil {
-			logger.GLogger.AddToLog("FATAL", err.Error())
-			logger.GLogger.Notify("Fatal Error in InitStore")
-			os.Exit(1)
-		}
-		defer file.Close()
-	}
-
-	store := &Store{
-		storageFilename: STORAGE_FILENAME,
+func NewStore(filename string) *Store {
+	return &Store{
+		storageFilename: filename,
 		cachedData:      make([]StoredData, 0),
 		cacheExpired:    true,
 		cachedDataMutex: sync.Mutex{},
 	}
+}
+
+func InitStore(reset bool) *Store {
+	utils.ChangeToGoModDir()
+
+	store := NewStore(DEFAULT_STORAGE_FILENAME)
+	if reset {
+		if err := store.Reset(); err != nil {
+			logger.GLogger.AddToLog("FATAL", err.Error())
+			logger.GLogger.Notify("Fatal Error in InitStore")
+			os.Exit(1)
+		}
+	}
 
 	return store
+}
+
+func (s *Store) Reset() error {
+	s.cachedDataMutex.Lock()
+	defer s.cachedDataMutex.Unlock()
+
+	println(s.storageFilename)
+	file, err := os.Create(s.storageFilename)
+	if err != nil {
+		return fmt.Errorf("failed to create storage file: %w", err)
+	}
+	defer file.Close()
+
+	if _, err := file.WriteString("[]"); err != nil {
+		return fmt.Errorf("failed to initialize storage file: %w", err)
+	}
+
+	s.cachedData = make([]StoredData, 0)
+	s.cacheExpired = true
+	return nil
+}
+
+func (s *Store) ClearStore() error {
+	return s.Reset()
 }
 
 func (s *Store) GetStoredData(id int) (StoredData, bool, error) {
@@ -169,18 +189,6 @@ func (s *Store) DeleteStoredData(id int) error {
 	return nil
 }
 
-func (s *Store) ClearStore() error {
-	s.cachedDataMutex.Lock()
-	defer s.cachedDataMutex.Unlock()
-
-	newS := InitStore(true)
-	s.cachedData = newS.cachedData
-	s.cacheExpired = newS.cacheExpired
-	s.cachedData = make([]StoredData, 0)
-	s.cacheExpired = true
-	return nil
-}
-
 func (s *Store) saveToFile() error {
 	jsonData, err := json.Marshal(s.cachedData)
 	if err != nil {
@@ -194,4 +202,8 @@ func (s *Store) saveToFile() error {
 	}
 
 	return nil
+}
+
+func (s *Store) GetFilename() string {
+	return s.storageFilename
 }

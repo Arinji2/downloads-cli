@@ -14,7 +14,7 @@ func readAndParseStoredData(s *Store) ([]StoredData, error) {
 		return s.cachedData, nil
 	}
 
-	data, err := os.ReadFile(STORAGE_FILENAME)
+	data, err := os.ReadFile(s.storageFilename)
 	if err != nil {
 		logger.GLogger.AddToLog("ERROR", err.Error())
 		return nil, err
