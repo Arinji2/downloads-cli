@@ -66,7 +66,7 @@ func FoundCustomMove(data store.StoredData, m *Move) (moved bool, err error) {
 	fmt.Println("3] OriginalPath", originalPath)
 
 	if runtime.GOOS == "windows" {
-		firstIndex := strings.Index(destPath, ":")
+		firstIndex := (strings.Index(destPath, ":")) + 1
 		beforeMount := destPath[:firstIndex]
 		afterMount := destPath[firstIndex:]
 		println("1] BeforeMount", beforeMount)
