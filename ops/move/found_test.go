@@ -63,7 +63,6 @@ func TestFoundDefaultMove_Broken(t *testing.T) {
 		t.Fatalf("Expected 1 stored data, got %d", len(data))
 	}
 
-	// Modify data to break it
 	data[0].Args[2] = "testBroken"
 	moved, err := move.FoundDefaultMove(data[0], moveJob)
 	if err == nil {
