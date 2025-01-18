@@ -2,13 +2,13 @@ package watcher
 
 import (
 	"fmt"
-	"slices"
 	"strings"
 	"time"
 
 	"github.com/Arinji2/downloads-cli/logger"
 	"github.com/Arinji2/downloads-cli/ops/delete"
 	"github.com/Arinji2/downloads-cli/ops/move"
+	"github.com/Arinji2/downloads-cli/store"
 	"github.com/Arinji2/downloads-cli/utils"
 )
 
@@ -18,9 +18,9 @@ type DeletedFile struct {
 }
 
 type WatcherLog struct {
-	DeletedFiles []DeletedFile
-	DeleteJobs   delete.Delete
-	MoveJobs     move.Move
+	Store      *store.Store
+	DeleteJobs delete.Delete
+	MoveJobs   move.Move
 }
 
 func (w *WatcherLog) FileCreated(path string) {
@@ -55,35 +55,31 @@ func (w *WatcherLog) FileCreated(path string) {
 	}
 }
 
-func (w *WatcherLog) FileDeleted(path string, timestamp time.Time) {
+func (w *WatcherLog) FileDeleted(path string) {
 	println("File deleted: " + path)
-	w.DeletedFiles = append(w.DeletedFiles, DeletedFile{
-		Path:      path,
-		Timestamp: timestamp,
-	})
+	parts := strings.Split(path, "/")
+	filename := parts[len(parts)-1]
+	err := w.DeleteJobs.DeleteByFilename(filename)
+	if err != nil {
+		logger.GLogger.AddToLog("ERROR", err.Error())
+		return
+	}
 }
 
-func (w *WatcherLog) FileRenamed(path string, originalPath string, timestamp time.Time) {
-	println("File renamed: " + path)
+func (w *WatcherLog) FileRenamed(path string, originalPath string) {
+	originalParts := strings.Split(originalPath, "/")
+	originalFilename := originalParts[len(originalParts)-1]
 
-	// Find the index of the original file in DeletedFiles
-	index := -1
-	for i, df := range w.DeletedFiles {
-		if df.Path == originalPath {
-			// Check if the rename happened within a minute of deletion
-			timeDiff := timestamp.Sub(df.Timestamp)
-			if timeDiff <= time.Minute {
-				index = i
-				println("Found matching deleted file within 1 minute timeframe")
-				break
-			} else {
-				println("Found matching deleted file but time difference was:", timeDiff.Seconds(), "seconds")
-			}
-		}
+	newParts := strings.Split(path, "/")
+	newFilename := newParts[len(newParts)-1]
+
+	if newFilename == originalFilename {
+		return
 	}
 
-	if index != -1 {
-		w.DeletedFiles = slices.Delete(w.DeletedFiles, index, index+1)
-		println("Removed Deleted File", path, "from WatcherLog")
+	err := w.DeleteJobs.DeleteByFilename(originalFilename)
+	if err != nil {
+		logger.GLogger.AddToLog("ERROR", err.Error())
 	}
+	w.FileCreated(path)
 }
