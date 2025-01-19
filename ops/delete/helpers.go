@@ -13,7 +13,7 @@ import (
 func verifyDelete(fileName string) (timeStr string, err error) {
 	parts := strings.Split(fileName, ".")
 	if len(parts) < 2 {
-		logger.GLogger.AddToLog("ERROR", "invalid file name for delete")
+		logger.GlobalLogger.AddToLog("ERROR", "invalid file name for delete")
 		return "", fmt.Errorf("invalid file name for delete")
 	}
 

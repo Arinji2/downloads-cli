@@ -63,7 +63,7 @@ func (d *Delete) RunDeleteJobs() {
 
 		storedData, err := d.Operations.Store.GetAllStoredData()
 		if err != nil {
-			logger.GLogger.AddToLog("ERROR", err.Error())
+			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 			break
 		}
 		for _, data := range storedData {
@@ -73,7 +73,7 @@ func (d *Delete) RunDeleteJobs() {
 				}
 				_, err := FoundDelete(data, d)
 				if err != nil {
-					logger.GLogger.AddToLog("ERROR", err.Error())
+					logger.GlobalLogger.AddToLog("ERROR", err.Error())
 					continue
 				}
 
@@ -85,7 +85,7 @@ func (d *Delete) RunDeleteJobs() {
 func (d *Delete) DeleteByFilename(fileName string) error {
 	data, err := d.Operations.Store.GetAllStoredData()
 	if err != nil {
-		logger.GLogger.AddToLog("ERROR", err.Error())
+		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		return err
 	}
 	foundData := slices.IndexFunc(data, func(data store.StoredData) bool {
@@ -98,7 +98,7 @@ func (d *Delete) DeleteByFilename(fileName string) error {
 	storeData := data[foundData]
 	err = d.Operations.Store.DeleteStoredData(storeData.ID)
 	if err != nil {
-		logger.GLogger.AddToLog("ERROR", err.Error())
+		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		return err
 	}
 	return nil
