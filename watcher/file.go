@@ -27,7 +27,6 @@ type WatcherLog struct {
 func (w *WatcherLog) FileCreated(path string) {
 	fileParts := strings.Split(path, string(os.PathSeparator))
 	fileName := fileParts[len(fileParts)-1]
-	logger.GLogger.Notify(fmt.Sprintf("Created File %s", fileName))
 	operationType, err := utils.GetOperationType(fileName)
 	if err != nil {
 		logger.GLogger.AddToLog("ERROR", err.Error())

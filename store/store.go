@@ -38,7 +38,6 @@ func InitStore(reset bool) *Store {
 	if reset {
 		if err := store.Reset(); err != nil {
 			logger.GLogger.AddToLog("FATAL", err.Error())
-			logger.GLogger.Notify("Fatal Error in InitStore")
 			os.Exit(1)
 		}
 	}
