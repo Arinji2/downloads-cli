@@ -48,22 +48,3 @@ checksum:
   name_template: 'checksums.txt'
   algorithm: sha256
 
-signs:
-  - artifacts: checksum
-    cmd: gpg
-    args:
-      - --batch
-      - --yes
-      - --armor
-      - --sign
-      - --detach-sig
-      - '{{ .ArtifactPath }}'
-
-
-changelog:
-  sort: asc
-  filters:
-    exclude:
-      - '^docs:'
-      - '^test:'
-      - '^ci:'
