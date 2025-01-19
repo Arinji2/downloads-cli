@@ -45,7 +45,6 @@ func StartWatcher(s *store.Store, opts options.Options, deleteJob *delete.Delete
 				fmt.Println(err)
 			}
 			match := c.MatchString(parts[len(parts)-1])
-			println(match)
 			if !match {
 				continue
 			}

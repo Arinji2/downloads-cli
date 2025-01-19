@@ -57,7 +57,6 @@ func (w *WatcherLog) FileCreated(path string) {
 }
 
 func (w *WatcherLog) FileDeleted(path string) {
-	println("File deleted: " + path)
 	parts := strings.Split(path, "/")
 	filename := parts[len(parts)-1]
 	err := w.DeleteJobs.DeleteByFilename(filename)
