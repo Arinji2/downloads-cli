@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/Arinji2/downloads-cli/logger"
-	"github.com/Arinji2/downloads-cli/utils"
 )
 
 type CheckInterval struct {
@@ -22,7 +21,6 @@ type Options struct {
 var OPTIONS_FILENAME = "options.json"
 
 func GetOptions() Options {
-	utils.ChangeToGoModDir()
 	_, err := os.Stat(OPTIONS_FILENAME)
 	if err != nil || os.IsNotExist(err) {
 		logger.GLogger.AddToLog("FATAL", "options file not found")

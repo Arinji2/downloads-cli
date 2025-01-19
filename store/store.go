@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	"github.com/Arinji2/downloads-cli/logger"
-	"github.com/Arinji2/downloads-cli/utils"
 )
 
 var DEFAULT_STORAGE_FILENAME = "store.json"
@@ -35,8 +34,6 @@ func NewStore(filename string) *Store {
 }
 
 func InitStore(reset bool) *Store {
-	utils.ChangeToGoModDir()
-
 	store := NewStore(DEFAULT_STORAGE_FILENAME)
 	if reset {
 		if err := store.Reset(); err != nil {
