@@ -16,9 +16,6 @@ builds:
       - darwin
     goarch:
       - amd64
-    ignore:
-      - goos: darwin
-    # Build flags for better binary optimization
     flags:
       - -trimpath
     ldflags:
