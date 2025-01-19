@@ -23,20 +23,20 @@ var OPTIONS_FILENAME = "options.json"
 func GetOptions() Options {
 	_, err := os.Stat(OPTIONS_FILENAME)
 	if err != nil || os.IsNotExist(err) {
-		logger.GLogger.AddToLog("FATAL", "options file not found")
+		logger.GlobalLogger.AddToLog("FATAL", "options file not found")
 		os.Exit(1)
 	}
 
 	contents, err := os.ReadFile(OPTIONS_FILENAME)
 	if err != nil {
-		logger.GLogger.AddToLog("FATAL", err.Error())
+		logger.GlobalLogger.AddToLog("FATAL", err.Error())
 		os.Exit(1)
 	}
 
 	var options Options
 	err = json.Unmarshal(contents, &options)
 	if err != nil {
-		logger.GLogger.AddToLog("FATAL", err.Error())
+		logger.GlobalLogger.AddToLog("FATAL", err.Error())
 		os.Exit(1)
 	}
 
