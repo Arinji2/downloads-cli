@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/Arinji2/downloads-cli/logger"
@@ -31,5 +32,7 @@ func main() {
 
 	go deleteJob.RunDeleteJobs()
 	go moveJob.RunMoveJobs()
+
+	fmt.Println("DOWNLOADS CLI STARTED SUCCESSFULLY")
 	<-make(chan struct{})
 }
