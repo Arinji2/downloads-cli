@@ -1,0 +1,12 @@
+{
+  "downloads_folder": "/Users/example/Downloads/",
+  "log_file": "app.log",
+  "check_interval": {
+    "delete": 5,
+    "move": 5
+  },
+  "move_presets": {
+    "code": "/Users/example/Development/",
+    "pictures": "/Users/example/Pictures"
+  }
+}
