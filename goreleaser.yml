@@ -1,17 +1,31 @@
-project_name: downloads-cli
+# .goreleaser.yml
+version: 2
+
+before:
+  hooks:
+    # Ensure our go.mod is tidy before building
+    - go mod tidy
+
 builds:
   - env:
-      - CGO_ENABLED=0
+      - CGO_ENABLED=0  # Keeping CGO disabled for better portability
+    # binary name will match the project name
+    binary: '{{ .ProjectName }}'
     goos:
       - linux
       - windows
       - darwin
     goarch:
       - amd64
-      - '386'
     ignore:
       - goos: darwin
-        goarch: '386'
+    # Add mod timestamp for reproducible builds
+    mod_timestamp: '{{ .CommitTimestamp }}'
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
+
 archives:
   - format: tar.gz
     name_template: >-
@@ -30,10 +44,20 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
+    # ensure files are created with correct permissions
+    wrap_in_directory: true
+    strip_parent_binary_folder: true
+
 checksum:
   name_template: 'checksums.txt'
+  algorithm: sha256
+
+signs:
+  - artifacts: checksum
+
 snapshot:
   name_template: "{{ incpatch .Version }}-next"
+
 changelog:
   sort: asc
   filters:
