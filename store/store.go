@@ -37,7 +37,7 @@ func InitStore(reset bool) *Store {
 	store := NewStore(DEFAULT_STORAGE_FILENAME)
 	if reset {
 		if err := store.Reset(); err != nil {
-			logger.GLogger.AddToLog("FATAL", err.Error())
+			logger.GlobalLogger.AddToLog("FATAL", err.Error())
 			os.Exit(1)
 		}
 	}
@@ -74,7 +74,7 @@ func (s *Store) GetStoredData(id int) (StoredData, bool, error) {
 
 	if s.cacheExpired {
 		if _, err := readAndParseStoredData(s); err != nil {
-			logger.GLogger.AddToLog("ERROR", err.Error())
+			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 			return StoredData{}, false, err
 		}
 	}
@@ -93,7 +93,7 @@ func (s *Store) GetAllStoredData() ([]StoredData, error) {
 
 	if s.cacheExpired {
 		if _, err := readAndParseStoredData(s); err != nil {
-			logger.GLogger.AddToLog("ERROR", err.Error())
+			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 			return nil, err
 		}
 	}
@@ -107,7 +107,7 @@ func (s *Store) AddStoredData(data StoredData) error {
 
 	if s.cacheExpired {
 		if _, err := readAndParseStoredData(s); err != nil {
-			logger.GLogger.AddToLog("ERROR", err.Error())
+			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 			return err
 		}
 	}
@@ -115,7 +115,7 @@ func (s *Store) AddStoredData(data StoredData) error {
 	s.cachedData = append(s.cachedData, data)
 
 	if err := s.saveToFile(); err != nil {
-		logger.GLogger.AddToLog("ERROR", err.Error())
+		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		return err
 	}
 
@@ -129,7 +129,7 @@ func (s *Store) UpdateStoredData(id int, data StoredData) error {
 
 	if s.cacheExpired {
 		if _, err := readAndParseStoredData(s); err != nil {
-			logger.GLogger.AddToLog("ERROR", err.Error())
+			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 			return err
 		}
 	}
@@ -144,12 +144,12 @@ func (s *Store) UpdateStoredData(id int, data StoredData) error {
 	}
 
 	if !idFound {
-		logger.GLogger.AddToLog("ERROR", fmt.Sprintf("ID %d not found", id))
+		logger.GlobalLogger.AddToLog("ERROR", fmt.Sprintf("ID %d not found", id))
 		return fmt.Errorf("id %d not found", id)
 	}
 
 	if err := s.saveToFile(); err != nil {
-		logger.GLogger.AddToLog("ERROR", err.Error())
+		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		return err
 	}
 
@@ -163,7 +163,7 @@ func (s *Store) DeleteStoredData(id int) error {
 
 	if s.cacheExpired {
 		if _, err := readAndParseStoredData(s); err != nil {
-			logger.GLogger.AddToLog("ERROR", err.Error())
+			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 			return err
 		}
 	}
@@ -176,7 +176,7 @@ func (s *Store) DeleteStoredData(id int) error {
 	}
 
 	if err := s.saveToFile(); err != nil {
-		logger.GLogger.AddToLog("ERROR", err.Error())
+		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		return err
 	}
 
@@ -187,12 +187,12 @@ func (s *Store) DeleteStoredData(id int) error {
 func (s *Store) saveToFile() error {
 	jsonData, err := json.Marshal(s.cachedData)
 	if err != nil {
-		logger.GLogger.AddToLog("ERROR", err.Error())
+		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		return err
 	}
 
 	if err := os.WriteFile(s.storageFilename, jsonData, 0644); err != nil {
-		logger.GLogger.AddToLog("ERROR", err.Error())
+		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		return err
 	}
 

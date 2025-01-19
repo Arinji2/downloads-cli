@@ -16,7 +16,7 @@ func readAndParseStoredData(s *Store) ([]StoredData, error) {
 
 	data, err := os.ReadFile(s.storageFilename)
 	if err != nil {
-		logger.GLogger.AddToLog("ERROR", err.Error())
+		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		return nil, err
 	}
 

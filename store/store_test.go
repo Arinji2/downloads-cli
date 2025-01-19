@@ -6,10 +6,12 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/Arinji2/downloads-cli/logger"
 	"github.com/Arinji2/downloads-cli/store"
 )
 
 func setupTest(t *testing.T) (*store.Store, string) {
+	logger.SetupTestingLogger(t)
 	t.Helper()
 	tempDir := t.TempDir()
 	storeFile := filepath.Join(tempDir, "test-store.json")
