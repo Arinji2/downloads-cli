@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/Arinji2/downloads-cli/logger"
@@ -20,8 +19,11 @@ func main() {
 		panic(err)
 	}
 	s := store.InitStore(true)
-	logger.InitLogger(opts.LogFile)
-
+	log, err := logger.NewLogger(opts.LogFile, 1024*1024, "DOWNLOADS CLI")
+	if err != nil {
+		panic(err)
+	}
+	logger.GlobalizeLogger(log)
 	deleteOps := ops.InitOperations("DELETE", s)
 	deleteJob := delete.InitDelete(deleteOps, opts.CheckInterval.Delete)
 
@@ -33,6 +35,7 @@ func main() {
 	go deleteJob.RunDeleteJobs()
 	go moveJob.RunMoveJobs()
 
-	fmt.Println("DOWNLOADS CLI STARTED SUCCESSFULLY")
+	log.Notify("DOWNLOADS CLI STARTED SUCCESSFULLY")
+	log.AddToLog("INFO", "DOWNLOADS CLI STARTED SUCCESSFULLY")
 	<-make(chan struct{})
 }
