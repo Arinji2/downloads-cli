@@ -70,7 +70,7 @@ func (m *Move) RunMoveJobs() {
 
 		storedData, err := m.Operations.Store.GetAllStoredData()
 		if err != nil {
-			logger.GLogger.AddToLog("ERROR", err.Error())
+			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 			break
 		}
 		for _, data := range storedData {
@@ -84,14 +84,14 @@ func (m *Move) RunMoveJobs() {
 					_, err := FoundDefaultMove(data, m)
 					if err != nil {
 						err = fmt.Errorf("error handling default move job %v", err)
-						logger.GLogger.AddToLog("ERROR", err.Error())
+						logger.GlobalLogger.AddToLog("ERROR", err.Error())
 						continue
 					}
 				case MoveMC:
 					_, err := FoundCustomMove(data, m)
 					if err != nil {
 						err = fmt.Errorf("error handling custom move job %v", err)
-						logger.GLogger.AddToLog("ERROR", err.Error())
+						logger.GlobalLogger.AddToLog("ERROR", err.Error())
 						continue
 					}
 				default:
