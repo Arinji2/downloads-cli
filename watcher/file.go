@@ -29,7 +29,7 @@ func (w *WatcherLog) FileCreated(path string) {
 	fileName := fileParts[len(fileParts)-1]
 	operationType, err := utils.GetOperationType(fileName)
 	if err != nil {
-		logger.GLogger.AddToLog("ERROR", err.Error())
+		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		return
 	}
 	switch operationType {
@@ -37,22 +37,22 @@ func (w *WatcherLog) FileCreated(path string) {
 		err := w.DeleteJobs.NewDeleteRegistered(fileName, path)
 		if err != nil {
 			err = fmt.Errorf("error creating delete job: %v", err)
-			logger.GLogger.AddToLog("ERROR", err.Error())
+			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		}
 	case "md":
 		err := w.MoveJobs.NewMoveRegistered(fileName, path)
 		if err != nil {
 			err = fmt.Errorf("error creating move preset job: %v", err)
-			logger.GLogger.AddToLog("ERROR", err.Error())
+			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		}
 	case "mc":
 		err := w.MoveJobs.NewMoveRegistered(fileName, path)
 		if err != nil {
 			err = fmt.Errorf("error creating move custom job: %v", err)
-			logger.GLogger.AddToLog("ERROR", err.Error())
+			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		}
 	default:
-		logger.GLogger.AddToLog("ERROR", fmt.Sprintf("invalid operation type: %s", operationType))
+		logger.GlobalLogger.AddToLog("ERROR", fmt.Sprintf("invalid operation type: %s", operationType))
 	}
 }
 
@@ -61,7 +61,7 @@ func (w *WatcherLog) FileDeleted(path string) {
 	filename := parts[len(parts)-1]
 	err := w.DeleteJobs.DeleteByFilename(filename)
 	if err != nil {
-		logger.GLogger.AddToLog("ERROR", err.Error())
+		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		return
 	}
 }
@@ -79,7 +79,7 @@ func (w *WatcherLog) FileRenamed(path string, originalPath string) {
 
 	err := w.DeleteJobs.DeleteByFilename(originalFilename)
 	if err != nil {
-		logger.GLogger.AddToLog("ERROR", err.Error())
+		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 	}
 	w.FileCreated(path)
 }

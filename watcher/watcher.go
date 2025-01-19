@@ -18,13 +18,13 @@ func StartWatcher(s *store.Store, opts options.Options, deleteJob *delete.Delete
 	config := fsbroker.DefaultFSConfig()
 	broker, err := fsbroker.NewFSBroker(config)
 	if err != nil {
-		logger.GLogger.AddToLog("FATAL", fmt.Errorf("error creating FS Broker: %v", err).Error())
+		logger.GlobalLogger.AddToLog("FATAL", fmt.Errorf("error creating FS Broker: %v", err).Error())
 		log.Fatalf("error creating FS Broker: %v", err)
 	}
 	defer broker.Stop()
 
 	if err := broker.AddRecursiveWatch(opts.DownloadsFolder); err != nil {
-		logger.GLogger.AddToLog("FATAL", fmt.Errorf("error adding watch: %v", err).Error())
+		logger.GlobalLogger.AddToLog("FATAL", fmt.Errorf("error adding watch: %v", err).Error())
 		log.Fatalf("error adding watch: %v", err)
 	}
 
@@ -57,13 +57,13 @@ func StartWatcher(s *store.Store, opts options.Options, deleteJob *delete.Delete
 			if event.Type.String() == "Rename" {
 				originalPath, exists := event.Properties["OldPath"]
 				if !exists {
-					logger.GLogger.AddToLog("ERROR", "originalPath not found in properties")
+					logger.GlobalLogger.AddToLog("ERROR", "originalPath not found in properties")
 					continue
 				}
 				watcherLog.FileRenamed(event.Path, originalPath)
 			}
 		case error := <-broker.Error():
-			logger.GLogger.AddToLog("ERROR", error.Error())
+			logger.GlobalLogger.AddToLog("ERROR", error.Error())
 			fmt.Println(error.Error())
 		}
 	}
