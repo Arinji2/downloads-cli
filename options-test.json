@@ -1,0 +1,12 @@
+{
+  "downloads_folder": "/home/arinji/Downloads/",
+  "log_file": "app.log",
+  "check_interval": {
+    "delete": 5,
+    "move": 5
+  },
+  "move_presets": {
+    "code": "/home/arinji/code/",
+    "pictures": "/home/arinji/Pictures"
+  }
+}

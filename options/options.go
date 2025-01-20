@@ -2,9 +2,9 @@ package options
 
 import (
 	"encoding/json"
+	"fmt"
+	"log"
 	"os"
-
-	"github.com/Arinji2/downloads-cli/logger"
 )
 
 type CheckInterval struct {
@@ -23,21 +23,33 @@ var OPTIONS_FILENAME = "options.json"
 func GetOptions() Options {
 	_, err := os.Stat(OPTIONS_FILENAME)
 	if err != nil || os.IsNotExist(err) {
-		logger.GlobalLogger.AddToLog("FATAL", "options file not found")
+		files, err := os.ReadDir(".")
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println("could not find options.json, files in current directory:")
+		for _, file := range files {
+			log.Println(file.Name())
+		}
+		wd, err := os.Getwd()
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println("current directory:", wd)
 		os.Exit(1)
 	}
 
 	contents, err := os.ReadFile(OPTIONS_FILENAME)
 	if err != nil {
-		logger.GlobalLogger.AddToLog("FATAL", err.Error())
-		os.Exit(1)
+		err = fmt.Errorf("failed to read options.json: %w", err)
+		log.Fatal(err)
 	}
 
 	var options Options
 	err = json.Unmarshal(contents, &options)
 	if err != nil {
-		logger.GlobalLogger.AddToLog("FATAL", err.Error())
-		os.Exit(1)
+		err = fmt.Errorf("failed to unmarshal options: %w", err)
+		log.Fatal(err)
 	}
 
 	return options
