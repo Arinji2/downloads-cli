@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -139,11 +140,36 @@ func (n *notifier) Notify(title, message string) error {
 		return cmd.Run()
 
 	case "windows":
-		// Windows uses PowerShell
-		script := fmt.Sprintf(`[System.Windows.Forms.MessageBox]::Show('%s','%s')`, message, title)
-		cmd := exec.Command("powershell", "-Command", "Add-Type", "-AssemblyName", "System.Windows.Forms;", script)
-		return cmd.Run()
+		// Escape single quotes in the message and title
+		message = strings.ReplaceAll(message, "'", "''")
+		title = strings.ReplaceAll(title, "'", "''")
 
+		// Try Windows 10+ toast notification first
+		script := fmt.Sprintf(`
+[Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] > $null
+$template = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType]::ToastText02)
+
+$toastXml = [xml] $template.GetXml()
+$toastXml.GetElementsByTagName("text")[0].AppendChild($toastXml.CreateTextNode('%s')) > $null
+$toastXml.GetElementsByTagName("text")[1].AppendChild($toastXml.CreateTextNode('%s')) > $null
+
+$toast = [Windows.UI.Notifications.ToastNotification]::new($toastXml)
+$notifier = [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('%s')
+$notifier.Show($toast)`, title, message, title)
+
+		cmd := exec.Command("powershell", "-Command", script)
+		err := cmd.Run()
+		if err == nil {
+			return nil
+		}
+
+		// Fallback to WPF MessageBox if toast notification fails
+		script = fmt.Sprintf(`
+Add-Type -AssemblyName PresentationFramework
+[System.Windows.MessageBox]::Show('%s', '%s')`, message, title)
+
+		cmd = exec.Command("powershell", "-Command", script)
+		return cmd.Run()
 	default:
 		return fmt.Errorf("unsupported platform: %s", runtime.GOOS)
 	}
