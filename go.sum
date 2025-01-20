@@ -1,5 +1,3 @@
-github.com/Arinji2/cli-log v0.0.0-20250115045356-992545dd1767 h1:VOXfc2Y85LeVVypX0DIxurmaPmHPKVwzJAsWA/hhCR0=
-github.com/Arinji2/cli-log v0.0.0-20250115045356-992545dd1767/go.mod h1:7e1Ek9YFAJ8fzASAUSKkKUEOZq/bXzzKIdhUVNpflOY=
 github.com/fsnotify/fsnotify v1.8.0 h1:dAwr6QBTBZIkG8roQaJjGof0pp0EeF+tNV7YBP3F/8M=
 github.com/fsnotify/fsnotify v1.8.0/go.mod h1:8jBTzvmWwFyi3Pb8djgCCO5IBqzKJ/Jwo8TRcHyHii0=
 github.com/helshabini/fsbroker v0.1.5 h1:8RVYd+3T08WUhXDDM3vtJPPQe4OxJNrNFjGxzX81TsA=
