@@ -2,12 +2,15 @@ package utils
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 )
 
+var operationTypes = []string{"d", "md", "mc", "l"}
+
 func GetOperationType(fileName string) (string, error) {
 	rawType := strings.Split(fileName, "-")[0]
-	if rawType != "d" && rawType != "md" && rawType != "mc" {
+	if !slices.Contains(operationTypes, rawType) {
 		return "", fmt.Errorf("invalid operation type")
 	}
 	return rawType, nil
