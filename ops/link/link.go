@@ -37,9 +37,6 @@ func (l *Link) NewLinkRegistered(fileName string, pathName string) error {
 	if err != nil {
 		return err
 	}
-	if err != nil {
-		return err
-	}
 	id, err := store.GenerateStoreID(l.Operations.Store)
 	if err != nil {
 		return err
