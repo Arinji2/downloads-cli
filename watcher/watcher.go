@@ -8,13 +8,14 @@ import (
 
 	"github.com/Arinji2/downloads-cli/logger"
 	"github.com/Arinji2/downloads-cli/ops/delete"
+	"github.com/Arinji2/downloads-cli/ops/link"
 	"github.com/Arinji2/downloads-cli/ops/move"
 	"github.com/Arinji2/downloads-cli/options"
 	"github.com/Arinji2/downloads-cli/store"
 	"github.com/helshabini/fsbroker"
 )
 
-func StartWatcher(s *store.Store, opts options.Options, deleteJob *delete.Delete, moveJob *move.Move) {
+func StartWatcher(s *store.Store, opts options.Options, deleteJob *delete.Delete, moveJob *move.Move, linkJob *link.Link) {
 	config := fsbroker.DefaultFSConfig()
 	broker, err := fsbroker.NewFSBroker(config)
 	if err != nil {
@@ -33,6 +34,7 @@ func StartWatcher(s *store.Store, opts options.Options, deleteJob *delete.Delete
 		Store:      s,
 		DeleteJobs: *deleteJob,
 		MoveJobs:   *moveJob,
+		LinkJobs:   *linkJob,
 	}
 
 	for {

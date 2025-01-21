@@ -8,6 +8,7 @@ import (
 
 	"github.com/Arinji2/downloads-cli/logger"
 	"github.com/Arinji2/downloads-cli/ops/delete"
+	"github.com/Arinji2/downloads-cli/ops/link"
 	"github.com/Arinji2/downloads-cli/ops/move"
 	"github.com/Arinji2/downloads-cli/store"
 	"github.com/Arinji2/downloads-cli/utils"
@@ -22,6 +23,7 @@ type WatcherLog struct {
 	Store      *store.Store
 	DeleteJobs delete.Delete
 	MoveJobs   move.Move
+	LinkJobs   link.Link
 }
 
 func (w *WatcherLog) FileCreated(path string) {
@@ -49,6 +51,12 @@ func (w *WatcherLog) FileCreated(path string) {
 		err := w.MoveJobs.NewMoveRegistered(fileName, path)
 		if err != nil {
 			err = fmt.Errorf("error creating move custom job: %v", err)
+			logger.GlobalLogger.AddToLog("ERROR", err.Error())
+		}
+	case "l":
+		err := w.LinkJobs.NewLinkRegistered(fileName, path)
+		if err != nil {
+			err = fmt.Errorf("error creating link job: %v", err)
 			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		}
 	default:
