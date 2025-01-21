@@ -74,7 +74,7 @@ func (l *Link) RunLinkJobs() {
 				if data.InProgress {
 					continue
 				}
-				_, err := FoundDelete(data, l)
+				_, err := FoundLink(data, l)
 				if err != nil {
 					logger.GlobalLogger.AddToLog("ERROR", err.Error())
 					continue
