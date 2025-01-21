@@ -1,6 +1,7 @@
 package link
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -44,6 +45,15 @@ func (l *Link) NewLinkRegistered(fileName string, pathName string) error {
 	id, err := store.GenerateStoreID(l.Operations.Store)
 	if err != nil {
 		return err
+	}
+	fileInfo, err := os.Stat(pathName)
+	if err != nil {
+		return err
+	}
+	sizeInMB := float64(fileInfo.Size()) / (1024 * 1024)
+	if sizeInMB > 100 {
+		logger.GlobalLogger.Notify(fmt.Sprintf("File size is too large for %s. Max Size is %d(mb). Current File Size is %2.f", fileName, 100, sizeInMB))
+		return errors.New("file size is too large")
 	}
 	storeFile := store.StoredData{
 		ID:   id,
