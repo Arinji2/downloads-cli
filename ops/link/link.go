@@ -1,6 +1,10 @@
 package link
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/Arinji2/downloads-cli/logger"
@@ -71,13 +75,32 @@ func (l *Link) RunLinkJobs() {
 				if data.InProgress {
 					continue
 				}
-				_, err := FoundLink(data, l)
+				created, url, err := FoundLink(data, l)
 				if err != nil {
 					logger.GlobalLogger.AddToLog("ERROR", err.Error())
 					continue
 				}
+				if !created {
+					continue
+				}
+				_, err = RenameToLink(url, data.Args[2])
+				if err != nil {
+					logger.GlobalLogger.AddToLog("ERROR", err.Error())
+					continue
+				}
+				logger.GlobalLogger.Notify(fmt.Sprintf("Created link for file: %s", data.Args[0]))
 
 			}
 		}
 	}
+}
+
+func RenameToLink(link string, path string) (bool, error) {
+	fileName := filepath.Base(path)
+	newPath := strings.ReplaceAll(path, fileName, link)
+	err := os.Rename(path, newPath)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
