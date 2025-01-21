@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"sync"
-	"time"
 
 	"github.com/Arinji2/downloads-cli/logger"
 )
@@ -191,13 +190,10 @@ func (s *Store) saveToFile() error {
 		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		return err
 	}
-	timeStart := time.Now()
 	if err := os.WriteFile(s.storageFilename, jsonData, 0644); err != nil {
 		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		return err
 	}
-	timeEnd := time.Now()
-	logger.GlobalLogger.AddToLog("DEBUG", fmt.Sprintf("Saved store to file in %s", timeEnd.Sub(timeStart)))
 
 	return nil
 }
