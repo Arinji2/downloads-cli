@@ -1,6 +1,7 @@
 package move
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -64,6 +65,46 @@ func (m *Move) NewMoveRegistered(fileName string, pathName string) error {
 	return nil
 }
 
+func (m *Move) HandleMoveJob(data store.StoredData, typeOfMove MoveType) (string, error) {
+	switch typeOfMove {
+	case MoveMD:
+		moved, destPath, err := FoundDefaultMove(data, m)
+		if err != nil {
+			err = fmt.Errorf("error handling default move job %v", err)
+			logger.GlobalLogger.AddToLog("ERROR", err.Error())
+			return "", err
+		}
+		if !moved {
+			return "", errors.New("default move job failed")
+		}
+		if _, err := RenameToFilename(destPath); err != nil {
+			err = fmt.Errorf("error handling default move rename job %v", err)
+			logger.GlobalLogger.AddToLog("ERROR", err.Error())
+			return "", err
+		}
+		return destPath, nil
+	case MoveMC:
+		moved, destPath, err := FoundCustomMove(data, m)
+		if err != nil {
+			err = fmt.Errorf("error handling custom move job %v", err)
+			logger.GlobalLogger.AddToLog("ERROR", err.Error())
+			return "", err
+		}
+		if !moved {
+			return "", errors.New("custom move job failed")
+		}
+
+		if _, err := RenameToFilename(destPath); err != nil {
+			err = fmt.Errorf("error handling custom move rename job %v", err)
+			logger.GlobalLogger.AddToLog("ERROR", err.Error())
+			return "", err
+		}
+	default:
+		return "", errors.New("invalid move type")
+	}
+	return "", nil
+}
+
 func (m *Move) RunMoveJobs() {
 	ticker := time.NewTicker(time.Second * time.Duration(m.CheckInterval))
 	for range ticker.C {
@@ -78,26 +119,14 @@ func (m *Move) RunMoveJobs() {
 				if data.InProgress {
 					continue
 				}
-				typeOfMove := MoveType(strings.Split(data.Args[0], "-")[0])
-				switch typeOfMove {
-				case MoveMD:
-					_, err := FoundDefaultMove(data, m)
-					if err != nil {
-						err = fmt.Errorf("error handling default move job %v", err)
-						logger.GlobalLogger.AddToLog("ERROR", err.Error())
-						continue
-					}
-				case MoveMC:
-					_, err := FoundCustomMove(data, m)
-					if err != nil {
-						err = fmt.Errorf("error handling custom move job %v", err)
-						logger.GlobalLogger.AddToLog("ERROR", err.Error())
-						continue
-					}
-				default:
-					continue
-				}
 			}
+			typeOfMove := MoveType(strings.Split(data.Args[0], "-")[0])
+			_, err := m.HandleMoveJob(data, typeOfMove)
+			if err != nil {
+				logger.GlobalLogger.AddToLog("ERROR", err.Error())
+				continue
+			}
+
 		}
 	}
 }

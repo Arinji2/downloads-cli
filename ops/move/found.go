@@ -11,23 +11,23 @@ import (
 	"github.com/Arinji2/downloads-cli/utils"
 )
 
-func FoundDefaultMove(data store.StoredData, m *Move) (moved bool, err error) {
+func FoundDefaultMove(data store.StoredData, m *Move) (moved bool, destPath string, err error) {
 	data.InProgress = true
 	m.Operations.Store.UpdateStoredData(data.ID, data)
 	rawMoveType, err := utils.GetOperationType(data.Args[0])
 	if err != nil {
-		return false, err
+		return false, "", err
 	}
 	moveType := MoveType(rawMoveType)
 	if moveType != MoveMD {
-		return false, fmt.Errorf("invalid move type")
+		return false, "", fmt.Errorf("invalid move type")
 	}
 	fileName := data.Args[0]
 	originalPath := data.Args[1]
-	destPath := m.MovePresets[data.Args[2]]
+	destPath = m.MovePresets[data.Args[2]]
 	m.Operations.Store.DeleteStoredData(data.ID)
 	if destPath == "" {
-		return false, fmt.Errorf("invalid move string for move default")
+		return false, "", fmt.Errorf("invalid move string for move default")
 	}
 	if !strings.HasSuffix(destPath, fileName) {
 		destPath = filepath.Join(destPath, fileName)
@@ -35,25 +35,25 @@ func FoundDefaultMove(data store.StoredData, m *Move) (moved bool, err error) {
 
 	err = os.Rename(originalPath, destPath)
 	if err != nil {
-		return false, err
+		return false, "", err
 	}
-	return true, nil
+	return true, destPath, nil
 }
 
-func FoundCustomMove(data store.StoredData, m *Move) (moved bool, err error) {
+func FoundCustomMove(data store.StoredData, m *Move) (moved bool, destPath string, err error) {
 	data.InProgress = true
 	m.Operations.Store.UpdateStoredData(data.ID, data)
 	rawMoveType, err := utils.GetOperationType(data.Args[0])
 	if err != nil {
-		return false, err
+		return false, "", err
 	}
 	moveType := MoveType(rawMoveType)
 	if moveType != MoveMC {
-		return false, fmt.Errorf("invalid move type")
+		return false, "", fmt.Errorf("invalid move type")
 	}
 	fileName := data.Args[0]
 	originalPath := data.Args[1]
-	destPath := data.Args[2]
+	destPath = data.Args[2]
 	if !strings.HasSuffix(destPath, fileName) {
 		destPath = filepath.Join(destPath, fileName)
 	}
@@ -63,6 +63,18 @@ func FoundCustomMove(data store.StoredData, m *Move) (moved bool, err error) {
 		destPath = utils.WindowsMountIssue(destPath)
 	}
 	err = os.Rename(originalPath, destPath)
+	if err != nil {
+		return false, "", err
+	}
+	return true, destPath, nil
+}
+
+func RenameToFilename(destPath string) (bool, error) {
+	parts := strings.Split(destPath, "-")
+	fileName := parts[len(parts)-1]
+	dir := filepath.Dir(destPath)
+	modified := filepath.Join(dir, fileName)
+	err := os.Rename(destPath, modified)
 	if err != nil {
 		return false, err
 	}

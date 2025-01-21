@@ -1,6 +1,7 @@
 package move_test
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -25,12 +26,23 @@ func TestFoundDefaultMove_Valid(t *testing.T) {
 	if len(data) != 1 {
 		t.Fatalf("Expected 1 stored data, got %d", len(data))
 	}
-	moved, err := move.FoundDefaultMove(data[0], moveJob)
+	moved, destPath, err := move.FoundDefaultMove(data[0], moveJob)
 	if err != nil {
 		t.Fatalf("FoundDefaultMove failed: %v", err)
 	}
 	if !moved {
 		t.Error("Expected moved to be true")
+	}
+	if destPath == "" {
+		t.Error("Expected destPath to be set")
+	}
+
+	file, err := os.Stat(destPath)
+	if err != nil {
+		t.Fatalf("Failed to stat file: %v", err)
+	}
+	if file.IsDir() {
+		t.Error("Expected file to be a file")
 	}
 
 	// Verify cleanup
@@ -64,7 +76,7 @@ func TestFoundDefaultMove_Broken(t *testing.T) {
 	}
 
 	data[0].Args[2] = "testBroken"
-	moved, err := move.FoundDefaultMove(data[0], moveJob)
+	moved, _, err := move.FoundDefaultMove(data[0], moveJob)
 	if err == nil {
 		t.Error("Expected error, got nil")
 	}
@@ -99,12 +111,24 @@ func TestFoundCustomMove_Valid(t *testing.T) {
 		t.Fatalf("Expected 1 stored data, got %d", len(data))
 	}
 
-	moved, err := move.FoundCustomMove(data[0], moveJob)
+	moved, destPath, err := move.FoundCustomMove(data[0], moveJob)
 	if err != nil {
 		t.Fatalf("FoundCustomMove failed: %v", err)
 	}
 	if !moved {
 		t.Error("Expected moved to be true")
+	}
+
+	if destPath == "" {
+		t.Error("Expected destPath to be set")
+	}
+
+	file, err := os.Stat(destPath)
+	if err != nil {
+		t.Fatalf("Failed to stat file: %v", err)
+	}
+	if file.IsDir() {
+		t.Error("Expected file to be a file")
 	}
 }
 
@@ -125,7 +149,7 @@ func TestFoundCustomMove_Broken(t *testing.T) {
 	}
 
 	data[0].Args[2] = filepath.Join(destPath, "brokenTest")
-	moved, err := move.FoundCustomMove(data[0], moveJob)
+	moved, _, err := move.FoundCustomMove(data[0], moveJob)
 	if err == nil {
 		t.Error("Expected error, got nil")
 	}
