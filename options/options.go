@@ -2,7 +2,6 @@ package options
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 )
@@ -11,6 +10,7 @@ type CheckInterval struct {
 	Delete int `json:"delete"`
 	Move   int `json:"move"`
 }
+
 type Options struct {
 	DownloadsFolder string            `json:"downloads_folder"`
 	LogFile         string            `json:"log_file"`
@@ -21,35 +21,28 @@ type Options struct {
 var OPTIONS_FILENAME = "options.json"
 
 func GetOptions() Options {
-	_, err := os.Stat(OPTIONS_FILENAME)
-	if err != nil || os.IsNotExist(err) {
-		files, err := os.ReadDir(".")
-		if err != nil {
-			log.Fatal(err)
-		}
-		log.Println("could not find options.json, files in current directory:")
-		for _, file := range files {
-			log.Println(file.Name())
-		}
+	if _, err := os.Stat(OPTIONS_FILENAME); os.IsNotExist(err) {
 		wd, err := os.Getwd()
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Println("current directory:", wd)
-		os.Exit(1)
+		log.Println("Current directory:", wd)
+
+		var options Options
+		options.MovePresets = make(map[string]string)
+		options.SetupOptions(true)
+		return options
 	}
 
 	contents, err := os.ReadFile(OPTIONS_FILENAME)
 	if err != nil {
-		err = fmt.Errorf("failed to read options.json: %w", err)
-		log.Fatal(err)
+		log.Fatalf("Failed to read %s: %v", OPTIONS_FILENAME, err)
 	}
 
 	var options Options
-	err = json.Unmarshal(contents, &options)
-	if err != nil {
-		err = fmt.Errorf("failed to unmarshal options: %w", err)
-		log.Fatal(err)
+	options.MovePresets = make(map[string]string)
+	if err := json.Unmarshal(contents, &options); err != nil {
+		log.Fatalf("Failed to unmarshal options: %v", err)
 	}
 
 	return options
