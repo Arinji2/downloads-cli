@@ -6,6 +6,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/Arinji2/downloads-cli/ops/delete"
+	"github.com/Arinji2/downloads-cli/ops/move"
 	options_setup "github.com/Arinji2/downloads-cli/options/setup"
 )
 
@@ -30,13 +32,13 @@ func (o *Options) SetupOptions(fileNotFound bool) *Options {
 	}
 
 	if o.CheckInterval.Delete == 0 {
-		o.CheckInterval.Delete = 5
-		options_setup.PrintMessage("Checking every 5s for deleted files. Update the options.json file to change.", "info")
+		o.CheckInterval.Delete = delete.DEFAULT_DELETE_INTERVAL
+		options_setup.PrintMessage(fmt.Sprintf("Checking every %d for deleted files. Update the options.json file to change.", delete.DEFAULT_DELETE_INTERVAL), "info")
 	}
 
 	if o.CheckInterval.Move == 0 {
-		o.CheckInterval.Move = 5
-		options_setup.PrintMessage("Checking every 5s for moved files. Update the options.json file to change.", "info")
+		o.CheckInterval.Move = move.DEFAULT_MOVE_INTERVAL
+		options_setup.PrintMessage(fmt.Sprintf("Checking every %d for moved files. Update the options.json file to change.", move.DEFAULT_MOVE_INTERVAL), "info")
 	}
 
 	initializeMovePresets(o)

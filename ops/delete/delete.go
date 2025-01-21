@@ -10,7 +10,7 @@ import (
 	"github.com/Arinji2/downloads-cli/store"
 )
 
-var DEFAULT_DELETE_INTERVAL = 30
+var DEFAULT_DELETE_INTERVAL = 5
 
 type Delete struct {
 	Operations    *ops.Operation
