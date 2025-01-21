@@ -6,6 +6,7 @@ import (
 	"github.com/Arinji2/downloads-cli/logger"
 	"github.com/Arinji2/downloads-cli/ops"
 	"github.com/Arinji2/downloads-cli/ops/delete"
+	"github.com/Arinji2/downloads-cli/ops/link"
 	"github.com/Arinji2/downloads-cli/ops/move"
 	"github.com/Arinji2/downloads-cli/options"
 	"github.com/Arinji2/downloads-cli/store"
@@ -30,10 +31,14 @@ func main() {
 	moveOps := ops.InitOperations("MOVE", s)
 	moveJob := move.InitMove(moveOps, opts.CheckInterval.Move, opts.MovePresets)
 
-	go watcher.StartWatcher(s, opts, deleteJob, moveJob)
+	linkOps := ops.InitOperations("LINK", s)
+	linkJob := link.InitLink(linkOps, opts.CheckInterval.Delete)
+
+	go watcher.StartWatcher(s, opts, deleteJob, moveJob, linkJob)
 
 	go deleteJob.RunDeleteJobs()
 	go moveJob.RunMoveJobs()
+	go linkJob.RunLinkJobs()
 
 	log.Notify("DOWNLOADS CLI STARTED SUCCESSFULLY")
 	log.AddToLog("INFO", "DOWNLOADS CLI STARTED SUCCESSFULLY")
