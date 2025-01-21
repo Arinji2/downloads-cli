@@ -27,9 +27,6 @@ func verifyDelete(fileName string) (timeStr string, err error) {
 		return "", err
 	}
 	timeStr = nameParts[1]
-	if len(timeStr) < 2 {
-		return "", fmt.Errorf("invalid file name for delete")
-	}
 	return timeStr, nil
 }
 
