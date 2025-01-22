@@ -82,7 +82,6 @@ func (u *Upload) UploadData() (string, error) {
 	}
 	defer resp.Body.Close()
 
-	// Read the response
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
