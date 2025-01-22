@@ -88,8 +88,7 @@ func (u *Upload) UploadData() (string, error) {
 	}
 
 	if strings.HasPrefix(string(body), endpoint.responsePrefix) {
-		url := strings.ReplaceAll(string(body), "/", "#")
-		return url, nil
+		return string(body), nil
 	}
 	return "", errors.New("invalid response from endpoint")
 }

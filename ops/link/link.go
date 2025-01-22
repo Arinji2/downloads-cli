@@ -52,6 +52,7 @@ func (l *Link) NewLinkRegistered(fileName string, pathName string) error {
 	}
 	sizeInMB := float64(fileInfo.Size()) / (1024 * 1024)
 	if sizeInMB > 100 {
+
 		logger.GlobalLogger.Notify(fmt.Sprintf("File size is too large for %s. Max Size is %d(mb). Current File Size is %2.f", fileName, 100, sizeInMB))
 		return errors.New("file size is too large")
 	}
@@ -86,6 +87,8 @@ func (l *Link) RunLinkJobs() {
 					continue
 				}
 				created, url, err := FoundLink(data, l)
+				lastIndex := strings.LastIndex(url, "/")
+				urlID := url[lastIndex+1:]
 				if err != nil {
 					logger.GlobalLogger.AddToLog("ERROR", err.Error())
 					continue
@@ -93,7 +96,12 @@ func (l *Link) RunLinkJobs() {
 				if !created {
 					continue
 				}
-				_, err = RenameToLink(url, data.Args[2])
+				typeOfLink := LinkType(data.Args[1])
+				if typeOfLink != LinkPerm && typeOfLink != LinkTemp {
+					continue
+				}
+				path := data.Args[2]
+				_, err = RenameToLink(urlID, typeOfLink, path)
 				if err != nil {
 					logger.GlobalLogger.AddToLog("ERROR", err.Error())
 					continue
@@ -105,9 +113,11 @@ func (l *Link) RunLinkJobs() {
 	}
 }
 
-func RenameToLink(link string, path string) (bool, error) {
+func RenameToLink(urlID string, typeOfLink LinkType, path string) (bool, error) {
 	fileName := filepath.Base(path)
-	newPath := strings.ReplaceAll(path, fileName, link)
+	url := fmt.Sprintf("dos.arinji.com#urlID=%s&type=%s", urlID, typeOfLink)
+
+	newPath := strings.ReplaceAll(path, fileName, url)
 	err := os.Rename(path, newPath)
 	if err != nil {
 		return false, err
