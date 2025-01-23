@@ -13,19 +13,29 @@ jobs:
         go-version: ['1.23.4']
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v4
-    
+    - name: Check out code
+      uses: actions/checkout@v4
+
     - name: Set up Go
-      working-directory: ./cli
       uses: actions/setup-go@v4
       with:
         go-version: ${{ matrix.go-version }}
-    
+
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/go-build
+          ${{ runner.os }}-go-mod
+        key: ${{ runner.os }}-go-${{ matrix.go-version }}-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-${{ matrix.go-version }}-
+
     - name: Install dependencies
-      working-directory: ./cli
       run: go mod download
-    
-    - name: Run tests
       working-directory: ./cli
+
+    - name: Run tests
       shell: bash
       run: go test -v ./...
+      working-directory: ./cli
