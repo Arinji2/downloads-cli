@@ -3,8 +3,12 @@ on:
   push:
     branches: [ main, master ]
     tags: [ "*" ]
+    paths:
+      - 'cli/**' # Only trigger if files in ./cli are changed
   pull_request:
     branches: [ main, master ]
+    paths:
+      - 'cli/**' # Only trigger for PRs modifying files in ./cli
 
 jobs:
   test:
