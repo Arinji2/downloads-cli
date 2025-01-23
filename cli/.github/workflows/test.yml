@@ -21,8 +21,10 @@ jobs:
         go-version: ${{ matrix.go-version }}
     
     - name: Install dependencies
+      working-directory: ./cli
       run: go mod download
     
     - name: Run tests
+      working-directory: ./cli
       shell: bash
       run: go test -v ./...
