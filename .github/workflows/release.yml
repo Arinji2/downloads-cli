@@ -16,6 +16,7 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Set up Go
+      working-directory: ./cli
       uses: actions/setup-go@v4
       with:
         go-version: ${{ matrix.go-version }}
@@ -39,11 +40,13 @@ jobs:
           fetch-depth: 0
       
       - name: Set up Go
+        working-directory: ./cli
         uses: actions/setup-go@v5
         with:
           go-version: stable
       
       - name: Run GoReleaser
+        working-directory: ./cli
         uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser

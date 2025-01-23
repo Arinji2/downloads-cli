@@ -2,11 +2,9 @@ version: 2
 
 before:
   hooks:
-    - cd cli
     - go mod tidy
 
 builds:
-  - dir: cli
     main: .
     env:
       - CGO_ENABLED=0
