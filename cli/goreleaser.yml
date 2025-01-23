@@ -5,7 +5,6 @@ before:
     - go mod tidy
 
 builds:
-    main: .
     env:
       - CGO_ENABLED=0
     binary: '{{ .ProjectName }}'

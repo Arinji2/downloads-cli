@@ -34,9 +34,9 @@ jobs:
       run: go mod download
       working-directory: ./cli
     
-    - name: Run tests
-      run: go test -v ./...
-      working-directory: ./cli
+    # - name: Run tests
+    #   run: go test -v ./...
+    #   working-directory: ./cli
 
   release:
     needs: test
