@@ -40,7 +40,7 @@ func StartWatcher(s *store.Store, opts options.Options, deleteJob *delete.Delete
 	for {
 		select {
 		case event := <-broker.Next():
-			fileRegex := `^[^-]+?-[^-]+?-[^-]+?\.txt$`
+			fileRegex := `^[^-]+?-[^-]+?-[^-]+?\.[^.]+$`
 			parts := strings.Split(event.Path, "/")
 			c, err := regexp.Compile(fileRegex)
 			if err != nil {
