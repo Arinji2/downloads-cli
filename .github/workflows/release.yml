@@ -1,20 +1,16 @@
 name: Release
 on:
-  workflow_run:
-    workflows: ["Run Tests"]
-    types:
-      - completed
+  push:
+    tags:
+      - '*'
 
 jobs:
   release:
-    if: > 
-      startsWith(github.event.workflow_run.head_commit.message, 'Release') &&
-      github.ref_type == 'tag'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
       
       - name: Set up Go
         uses: actions/setup-go@v5
