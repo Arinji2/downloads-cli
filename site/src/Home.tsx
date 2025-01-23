@@ -3,8 +3,10 @@ import { useEffect } from "react";
 const URL_REGEX = /^[a-zA-Z0-9]+\.[a-zA-Z]+$/;
 export default function Home() {
   const redirectFunc = () => {
-    const urlID = window.location.hash.slice(1);
-    const type = window.location.hash.slice(1);
+    const hash = window.location.hash.slice(1);
+    const params = new URLSearchParams(hash);
+    const urlID = params.get("urlID");
+    const type = params.get("type");
     if (urlID && type) {
       if (URL_REGEX.test(urlID)) {
         if (type === "t") {
@@ -19,16 +21,16 @@ export default function Home() {
     redirectFunc();
   }, []);
   return (
-    <div className="py-4 w-full h-[100svh] gap-6 bg-slate-800 flex flex-col items-center justify-center">
-      <h1 className="font-bold md:text-6xl text-4xl text-white text-center">
+    <div className="flex h-[100svh] w-full flex-col items-center justify-center gap-6 bg-slate-800 py-4">
+      <h1 className="text-center text-4xl font-bold text-white md:text-6xl">
         "Downloads On Steroids"
       </h1>
-      <p className="text-white/50 text-xl md:text-2xl">
+      <p className="text-xl text-white/50 md:text-2xl">
         You will be redirected shortly.
       </p>
       <button
         onClick={redirectFunc}
-        className=" text-white/50 shadow-black shadow-md mt-20 text-center hover:shadow-sm transition-all ease-in-out duration-300 px-6 py-4 text-sm md:text-base p-2 rounded-md"
+        className="mt-20 rounded-md p-2 px-6 py-4 text-center text-sm text-white/50 shadow-md shadow-black transition-all duration-300 ease-in-out hover:shadow-sm md:text-base"
       >
         If you haven't been redirected yet, click here.
       </button>
