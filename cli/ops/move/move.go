@@ -19,8 +19,9 @@ var (
 type MoveType string
 
 const (
-	MoveMD MoveType = "md"
-	MoveMC MoveType = "mc"
+	MoveMD  MoveType = "md"
+	MoveMC  MoveType = "mc"
+	MoveMDC MoveType = "mdc"
 )
 
 type Move struct {
