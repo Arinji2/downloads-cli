@@ -69,6 +69,43 @@ func FoundCustomMove(data store.StoredData, m *Move) (moved bool, destPath strin
 	return true, destPath, nil
 }
 
+func FoundCustomDefaultMove(data store.StoredData, m *Move) (moved bool, destPath string, err error) {
+	data.InProgress = true
+	m.Operations.Store.UpdateStoredData(data.ID, data)
+	rawMoveType, err := utils.GetOperationType(data.Args[0])
+	if err != nil {
+		return false, "", err
+	}
+	moveType := MoveType(rawMoveType)
+	if moveType != MoveMCD {
+		return false, "", fmt.Errorf("invalid move type")
+	}
+	fileName := data.Args[0]
+	originalPath := data.Args[1]
+	destinationPath := data.Args[2]
+
+	destPathParts := strings.Split(destinationPath, "/")
+	destPath, ok := m.MovePresets[destPathParts[0]]
+	if !ok {
+		return false, "", fmt.Errorf("invalid move preset")
+	}
+
+	destPath = filepath.Join(destPath, filepath.Join(destPathParts[1:]...))
+	m.Operations.Store.DeleteStoredData(data.ID)
+	if destPath == "" {
+		return false, "", fmt.Errorf("invalid move string for move default")
+	}
+	if !strings.HasSuffix(destPath, fileName) {
+		destPath = filepath.Join(destPath, fileName)
+	}
+
+	err = os.Rename(originalPath, destPath)
+	if err != nil {
+		return false, "", err
+	}
+	return true, destPath, nil
+}
+
 func RenameToFilename(destPath string) (bool, error) {
 	parts := strings.Split(destPath, "-")
 	fileName := parts[len(parts)-1]

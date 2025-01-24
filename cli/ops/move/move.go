@@ -100,6 +100,23 @@ func (m *Move) HandleMoveJob(data store.StoredData, typeOfMove MoveType) (string
 			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 			return "", err
 		}
+
+	case MoveMCD:
+		moved, destPath, err := FoundCustomDefaultMove(data, m)
+		if err != nil {
+			err = fmt.Errorf("error handling custom default move job %v", err)
+			logger.GlobalLogger.AddToLog("ERROR", err.Error())
+			return "", err
+		}
+		if !moved {
+			return "", errors.New("custom default move job failed")
+		}
+
+		if _, err := RenameToFilename(destPath); err != nil {
+			err = fmt.Errorf("error handling custom move rename job %v", err)
+			logger.GlobalLogger.AddToLog("ERROR", err.Error())
+			return "", err
+		}
 	default:
 		return "", errors.New("invalid move type")
 	}
