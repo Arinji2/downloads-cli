@@ -21,7 +21,7 @@ type MoveType string
 const (
 	MoveMD  MoveType = "md"
 	MoveMC  MoveType = "mc"
-	MoveMDC MoveType = "mdc"
+	MoveMCD MoveType = "mcd"
 )
 
 type Move struct {

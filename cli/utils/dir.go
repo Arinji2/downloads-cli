@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var operationTypes = []string{"d", "md", "mc", "l"}
+var operationTypes = []string{"d", "md", "mc", "mcd", "l"}
 
 func GetOperationType(fileName string) (string, error) {
 	rawType := strings.Split(fileName, "-")[0]

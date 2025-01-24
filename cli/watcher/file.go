@@ -42,15 +42,11 @@ func (w *WatcherLog) FileCreated(path string) {
 			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		}
 	case "md":
-		err := w.MoveJobs.NewMoveRegistered(fileName, path)
-		if err != nil {
-			err = fmt.Errorf("error creating move preset job: %v", err)
-			logger.GlobalLogger.AddToLog("ERROR", err.Error())
-		}
 	case "mc":
+	case "mcd":
 		err := w.MoveJobs.NewMoveRegistered(fileName, path)
 		if err != nil {
-			err = fmt.Errorf("error creating move custom job: %v", err)
+			err = fmt.Errorf("error creating move job: %v", err)
 			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		}
 	case "l":

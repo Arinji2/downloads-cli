@@ -41,6 +41,25 @@ func verifyMove(fileName string, m *Move) (err error) {
 			return err
 		}
 		return nil
+	case MoveMCD:
+		locOfPrefix := strings.Index(moveStr, "#")
+		if locOfPrefix == -1 {
+			return fmt.Errorf("invalid move string for move default custom")
+		}
+		moveDefault := moveStr[:locOfPrefix]
+		err = verifyMoveMD(m, moveDefault)
+		if err != nil {
+			return err
+		}
+		moveCustom := moveStr[locOfPrefix+1:]
+		defaultPath := m.MovePresets[moveDefault]
+		customPath := filepath.Join(defaultPath, moveCustom)
+		err = verifyMoveMC(customPath)
+		if err != nil {
+			return err
+		}
+		return nil
+
 	default:
 		return fmt.Errorf("invalid move type")
 	}
