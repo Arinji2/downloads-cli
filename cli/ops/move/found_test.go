@@ -177,9 +177,11 @@ func TestFoundCustomDefaultMove_Valid(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get stored data: %v", err)
 	}
+
 	if len(data) != 1 {
 		t.Fatalf("Expected 1 stored data, got %d", len(data))
 	}
+
 	moved, destPath, err := move.FoundCustomDefaultMove(data[0], moveJob)
 	if err != nil {
 		t.Fatalf("FoundCustomDefaultMove failed: %v", err)
