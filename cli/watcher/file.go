@@ -35,12 +35,14 @@ func (w *WatcherLog) FileCreated(path string) {
 		return
 	}
 	switch operationType {
+
 	case "d":
 		err := w.DeleteJobs.NewDeleteRegistered(fileName, path)
 		if err != nil {
 			err = fmt.Errorf("error creating delete job: %v", err)
 			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		}
+
 	case "md":
 		fallthrough
 	case "mc":
@@ -51,12 +53,14 @@ func (w *WatcherLog) FileCreated(path string) {
 			err = fmt.Errorf("error creating move job: %v", err)
 			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		}
+
 	case "l":
 		err := w.LinkJobs.NewLinkRegistered(fileName, path)
 		if err != nil {
 			err = fmt.Errorf("error creating link job: %v", err)
 			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		}
+
 	default:
 		logger.GlobalLogger.AddToLog("ERROR", fmt.Sprintf("invalid operation type: %s", operationType))
 	}
