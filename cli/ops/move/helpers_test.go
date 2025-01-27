@@ -41,6 +41,7 @@ func setupFS(t *testing.T, tempDir, moveType, name string) (fileName, testFile, 
 		}
 	}
 	formattedDestPath := strings.ReplaceAll(destPath, string(os.PathSeparator), move.CUSTOM_MOVE_SEPERATOR)
+
 	switch parsedMove {
 	case move.MoveMD:
 		formattedDestPath = "test"
