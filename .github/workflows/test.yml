@@ -1,7 +1,7 @@
 name: Run Tests
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, refactor]
     tags: [ "*" ]
     paths:
       - 'cli/**' # Only trigger if files in ./cli are changed
