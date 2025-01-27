@@ -24,3 +24,15 @@ func MoveFile(originalPath, destPath, fileName string) (bool, string, error) {
 
 	return true, destPath, nil
 }
+
+func RenameToFilename(destPath string) (bool, error) {
+	parts := strings.Split(destPath, "-")
+	fileName := parts[len(parts)-1]
+	dir := filepath.Dir(destPath)
+	modified := filepath.Join(dir, fileName)
+	err := os.Rename(destPath, modified)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
