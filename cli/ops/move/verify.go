@@ -25,7 +25,6 @@ func verifyMove(fileName string, m *Move) (err error) {
 	if err != nil {
 		return err
 	}
-
 	moveStr := nameParts[1]
 	moveType := MoveType(rawMoveType)
 	switch moveType {
@@ -42,6 +41,7 @@ func verifyMove(fileName string, m *Move) (err error) {
 		}
 		return nil
 	case MoveMCD:
+
 		locOfPrefix := strings.Index(moveStr, "#")
 		if locOfPrefix == -1 {
 			return fmt.Errorf("invalid move string for move default custom")
