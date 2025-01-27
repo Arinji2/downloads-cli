@@ -32,7 +32,6 @@ func FoundLink(data store.StoredData, l *Link) (bool, string, error) {
 	if err != nil {
 		return false, "", err
 	}
-	fmt.Println(d)
 	l.Operations.Store.DeleteStoredData(data.ID)
 	logger.GlobalLogger.AddToLog("INFO", fmt.Sprintf("Created link for file: %s", data.Args[0]))
 
