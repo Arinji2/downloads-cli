@@ -21,6 +21,7 @@ func FoundLink(data store.StoredData, l *Link) (bool, string, error) {
 	path := filepath.Join(data.RelativePath)
 	upload := new(Upload)
 	upload.filePath = path
+
 	switch linkType {
 	case LinkTemp:
 		upload.uploadType = LinkTemp
