@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/Arinji2/downloads-cli/logger"
-	"github.com/Arinji2/downloads-cli/utils"
+	"github.com/Arinji2/downloads-cli/ops/core"
 )
 
 func verifyMove(fileName string, m *Move) (err error) {
@@ -21,7 +21,7 @@ func verifyMove(fileName string, m *Move) (err error) {
 	if len(nameParts) < 3 {
 		return fmt.Errorf("invalid file name for move")
 	}
-	rawMoveType, err := utils.GetOperationType(fileName)
+	rawMoveType, err := core.GetOperationType(fileName)
 	if err != nil {
 		return err
 	}

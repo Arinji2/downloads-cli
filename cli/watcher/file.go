@@ -7,11 +7,11 @@ import (
 	"time"
 
 	"github.com/Arinji2/downloads-cli/logger"
+	"github.com/Arinji2/downloads-cli/ops/core"
 	"github.com/Arinji2/downloads-cli/ops/delete"
 	"github.com/Arinji2/downloads-cli/ops/link"
 	"github.com/Arinji2/downloads-cli/ops/move"
 	"github.com/Arinji2/downloads-cli/store"
-	"github.com/Arinji2/downloads-cli/utils"
 )
 
 type DeletedFile struct {
@@ -29,7 +29,7 @@ type WatcherLog struct {
 func (w *WatcherLog) FileCreated(path string) {
 	fileParts := strings.Split(path, string(os.PathSeparator))
 	fileName := fileParts[len(fileParts)-1]
-	operationType, err := utils.GetOperationType(fileName)
+	operationType, err := core.GetOperationType(fileName)
 	if err != nil {
 		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		return

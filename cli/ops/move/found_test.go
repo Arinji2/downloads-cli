@@ -75,7 +75,7 @@ func TestFoundDefaultMove_Broken(t *testing.T) {
 		t.Fatalf("Expected 1 stored data, got %d", len(data))
 	}
 
-	data[0].Args[2] = "testBroken"
+	data[0].Args[1] = "testBroken"
 	moved, _, err := move.FoundDefaultMove(data[0], moveJob)
 	if err == nil {
 		t.Error("Expected error, got nil")
@@ -148,7 +148,7 @@ func TestFoundCustomMove_Broken(t *testing.T) {
 		t.Fatalf("Expected 1 stored data, got %d", len(data))
 	}
 
-	data[0].Args[2] = filepath.Join(destPath, "brokenTest")
+	data[0].Args[1] = filepath.Join(destPath, "brokenTest")
 	moved, _, err := move.FoundCustomMove(data[0], moveJob)
 	if err == nil {
 		t.Error("Expected error, got nil")

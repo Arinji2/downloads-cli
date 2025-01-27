@@ -55,7 +55,6 @@ func (m *Move) NewMoveRegistered(fileName string, pathName string) error {
 		ID:   id,
 		Task: "MOVE",
 		Args: []string{
-			fileName,
 			pathName,
 			destPath,
 		},
@@ -78,7 +77,7 @@ func (m *Move) HandleMoveJob(data store.StoredData, typeOfMove MoveType) (string
 		if !moved {
 			return "", errors.New("default move job failed")
 		}
-		if _, err := RenameToFilename(destPath); err != nil {
+		if _, err := renameToFilename(destPath); err != nil {
 			err = fmt.Errorf("error handling default move rename job %v", err)
 			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 			return "", err
@@ -95,7 +94,7 @@ func (m *Move) HandleMoveJob(data store.StoredData, typeOfMove MoveType) (string
 			return "", errors.New("custom move job failed")
 		}
 
-		if _, err := RenameToFilename(destPath); err != nil {
+		if _, err := renameToFilename(destPath); err != nil {
 			err = fmt.Errorf("error handling custom move rename job %v", err)
 			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 			return "", err
@@ -112,7 +111,7 @@ func (m *Move) HandleMoveJob(data store.StoredData, typeOfMove MoveType) (string
 			return "", errors.New("custom default move job failed")
 		}
 
-		if _, err := RenameToFilename(destPath); err != nil {
+		if _, err := renameToFilename(destPath); err != nil {
 			err = fmt.Errorf("error handling custom move rename job %v", err)
 			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 			return "", err
