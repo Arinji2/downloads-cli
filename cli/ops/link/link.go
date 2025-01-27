@@ -62,9 +62,9 @@ func (l *Link) NewLinkRegistered(fileName string, pathName string) error {
 		Args: []string{
 			fileName,
 			string(linkType),
-			pathName,
 		},
-		InProgress: false,
+		RelativePath: pathName,
+		InProgress:   false,
 	}
 
 	l.Operations.Store.AddStoredData(storeFile)

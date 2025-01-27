@@ -17,7 +17,7 @@ func FoundLink(data store.StoredData, l *Link) (bool, string, error) {
 		return true, "", nil
 	}
 	linkType := LinkType(data.Args[1])
-	path := filepath.Join(data.Args[2])
+	path := filepath.Join(data.RelativePath)
 	upload := new(Upload)
 	upload.filePath = path
 	switch linkType {
