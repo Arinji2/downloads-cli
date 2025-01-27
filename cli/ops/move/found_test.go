@@ -45,7 +45,6 @@ func TestFoundDefaultMove_Valid(t *testing.T) {
 		t.Error("Expected file to be a file")
 	}
 
-	// Verify cleanup
 	data, err = s.GetAllStoredData()
 	if err != nil {
 		t.Fatalf("Failed to get stored data: %v", err)
@@ -84,7 +83,6 @@ func TestFoundDefaultMove_Broken(t *testing.T) {
 		t.Error("Expected moved to be false")
 	}
 
-	// Verify cleanup
 	data, err = s.GetAllStoredData()
 	if err != nil {
 		t.Fatalf("Failed to get stored data: %v", err)
@@ -157,7 +155,6 @@ func TestFoundCustomMove_Broken(t *testing.T) {
 		t.Error("Expected moved to be false")
 	}
 
-	// Verify cleanup
 	storedData, err := s.GetAllStoredData()
 	if err != nil {
 		t.Fatalf("Failed to get stored data: %v", err)
