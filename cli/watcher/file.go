@@ -42,7 +42,9 @@ func (w *WatcherLog) FileCreated(path string) {
 			logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		}
 	case "md":
+		fallthrough
 	case "mc":
+		fallthrough
 	case "mcd":
 		err := w.MoveJobs.NewMoveRegistered(fileName, path)
 		if err != nil {
