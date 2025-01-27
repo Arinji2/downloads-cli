@@ -62,10 +62,10 @@ func shutdown(s *store.Store) {
 		err = fmt.Errorf("error getting all stored data for shutdown: %v", err)
 		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 	}
-	for i, v := range data {
+	for _, v := range data {
 		if v.InProgress {
 			v.InProgress = false
-			if err := s.UpdateStoredData(i, v); err != nil {
+			if err := s.UpdateStoredData(v.ID, v); err != nil {
 				err = fmt.Errorf("error updating stored data for shutdown: %v", err)
 				logger.GlobalLogger.AddToLog("ERROR", err.Error())
 			}
