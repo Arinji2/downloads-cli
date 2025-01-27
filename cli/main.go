@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/Arinji2/downloads-cli/logger"
 	"github.com/Arinji2/downloads-cli/ops"
@@ -19,7 +22,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	s := store.InitStore(true)
+	s := store.InitStore(false)
 
 	log, err := logger.NewLogger(opts.LogFile, 1024*1024, "DOWNLOADS CLI")
 	if err != nil {
@@ -32,7 +35,12 @@ func main() {
 	log.Notify("DOWNLOADS CLI STARTED SUCCESSFULLY")
 	log.AddToLog("INFO", "DOWNLOADS CLI STARTED SUCCESSFULLY")
 
-	<-make(chan struct{})
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+
+	<-stop
+	fmt.Println("Shutting down gracefully...")
+	s.Shutdown()
 }
 
 func setupOperations(s *store.Store, o *options.Options) {

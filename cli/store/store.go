@@ -201,3 +201,20 @@ func (s *Store) saveToFile() error {
 func (s *Store) GetFilename() string {
 	return s.storageFilename
 }
+
+func (s *Store) Shutdown() {
+	data, err := s.GetAllStoredData()
+	if err != nil {
+		err = fmt.Errorf("error getting all stored data for shutdown: %v", err)
+		logger.GlobalLogger.AddToLog("ERROR", err.Error())
+	}
+	for i, v := range data {
+		if v.InProgress {
+			v.InProgress = false
+			if err := s.UpdateStoredData(i, v); err != nil {
+				err = fmt.Errorf("error updating stored data for shutdown: %v", err)
+				logger.GlobalLogger.AddToLog("ERROR", err.Error())
+			}
+		}
+	}
+}
