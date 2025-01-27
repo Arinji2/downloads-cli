@@ -26,13 +26,13 @@ type WatcherLog struct {
 	LinkJobs   link.Link
 }
 
-func (w *WatcherLog) FileCreated(path string) {
+func (w *WatcherLog) FileCreated(path string) bool {
 	fileParts := strings.Split(path, string(os.PathSeparator))
 	fileName := fileParts[len(fileParts)-1]
 	operationType, err := core.GetOperationType(fileName)
 	if err != nil {
 		logger.GlobalLogger.AddToLog("ERROR", err.Error())
-		return
+		return false
 	}
 	switch operationType {
 
@@ -41,6 +41,7 @@ func (w *WatcherLog) FileCreated(path string) {
 		if err != nil {
 			err = fmt.Errorf("error creating delete job: %v", err)
 			logger.GlobalLogger.AddToLog("ERROR", err.Error())
+			return false
 		}
 
 	case "md":
@@ -52,6 +53,7 @@ func (w *WatcherLog) FileCreated(path string) {
 		if err != nil {
 			err = fmt.Errorf("error creating move job: %v", err)
 			logger.GlobalLogger.AddToLog("ERROR", err.Error())
+			return false
 		}
 
 	case "l":
@@ -59,11 +61,14 @@ func (w *WatcherLog) FileCreated(path string) {
 		if err != nil {
 			err = fmt.Errorf("error creating link job: %v", err)
 			logger.GlobalLogger.AddToLog("ERROR", err.Error())
+			return false
 		}
 
 	default:
 		logger.GlobalLogger.AddToLog("ERROR", fmt.Sprintf("invalid operation type: %s", operationType))
+		return false
 	}
+	return true
 }
 
 func (w *WatcherLog) FileDeleted(path string) {
