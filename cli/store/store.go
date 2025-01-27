@@ -18,10 +18,11 @@ type Store struct {
 	cacheExpired    bool
 }
 type StoredData struct {
-	ID         int      `json:"id"`
-	Task       string   `json:"task"`
-	Args       []string `json:"args"`
-	InProgress bool     `json:"in_progress"`
+	ID           int      `json:"id"`
+	Task         string   `json:"task"`
+	Args         []string `json:"args"`
+	InProgress   bool     `json:"in_progress"`
+	RelativePath string   `json:"relative_path"`
 }
 
 func NewStore(filename string) *Store {
