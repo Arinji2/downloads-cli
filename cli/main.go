@@ -20,27 +20,40 @@ func main() {
 		panic(err)
 	}
 	s := store.InitStore(true)
+
 	log, err := logger.NewLogger(opts.LogFile, 1024*1024, "DOWNLOADS CLI")
 	if err != nil {
 		panic(err)
 	}
 	logger.GlobalizeLogger(log)
+
+	setupOperations(s, &opts)
+
+	log.Notify("DOWNLOADS CLI STARTED SUCCESSFULLY")
+	log.AddToLog("INFO", "DOWNLOADS CLI STARTED SUCCESSFULLY")
+
+	<-make(chan struct{})
+}
+
+func setupOperations(s *store.Store, o *options.Options) {
 	deleteOps := ops.InitOperations("DELETE", s)
-	deleteJob := delete.InitDelete(deleteOps, opts.CheckInterval.Delete)
+	deleteJob := delete.InitDelete(deleteOps, o.CheckInterval.Delete)
 
 	moveOps := ops.InitOperations("MOVE", s)
-	moveJob := move.InitMove(moveOps, opts.CheckInterval.Move, opts.MovePresets)
+	moveJob := move.InitMove(moveOps, o.CheckInterval.Move, o.MovePresets)
 
 	linkOps := ops.InitOperations("LINK", s)
-	linkJob := link.InitLink(linkOps, opts.CheckInterval.Delete)
+	linkJob := link.InitLink(linkOps, o.CheckInterval.Delete)
 
-	go watcher.StartWatcher(s, opts, deleteJob, moveJob, linkJob)
+	w := watcher.WatcherLog{
+		Store:      s,
+		DeleteJobs: *deleteJob,
+		MoveJobs:   *moveJob,
+		LinkJobs:   *linkJob,
+	}
+	go watcher.StartWatcher(&w, o)
 
 	go deleteJob.RunDeleteJobs()
 	go moveJob.RunMoveJobs()
 	go linkJob.RunLinkJobs()
-
-	log.Notify("DOWNLOADS CLI STARTED SUCCESSFULLY")
-	log.AddToLog("INFO", "DOWNLOADS CLI STARTED SUCCESSFULLY")
-	<-make(chan struct{})
 }

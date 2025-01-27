@@ -7,15 +7,11 @@ import (
 	"strings"
 
 	"github.com/Arinji2/downloads-cli/logger"
-	"github.com/Arinji2/downloads-cli/ops/delete"
-	"github.com/Arinji2/downloads-cli/ops/link"
-	"github.com/Arinji2/downloads-cli/ops/move"
 	"github.com/Arinji2/downloads-cli/options"
-	"github.com/Arinji2/downloads-cli/store"
 	"github.com/helshabini/fsbroker"
 )
 
-func StartWatcher(s *store.Store, opts options.Options, deleteJob *delete.Delete, moveJob *move.Move, linkJob *link.Link) {
+func StartWatcher(w *WatcherLog, opts *options.Options) {
 	config := fsbroker.DefaultFSConfig()
 	broker, err := fsbroker.NewFSBroker(config)
 	if err != nil {
@@ -30,12 +26,6 @@ func StartWatcher(s *store.Store, opts options.Options, deleteJob *delete.Delete
 	}
 
 	broker.Start()
-	watcherLog := WatcherLog{
-		Store:      s,
-		DeleteJobs: *deleteJob,
-		MoveJobs:   *moveJob,
-		LinkJobs:   *linkJob,
-	}
 
 	for {
 		select {
@@ -51,10 +41,10 @@ func StartWatcher(s *store.Store, opts options.Options, deleteJob *delete.Delete
 				continue
 			}
 			if event.Type.String() == "Create" {
-				watcherLog.FileCreated(event.Path)
+				w.FileCreated(event.Path)
 			}
 			if event.Type.String() == "Remove" {
-				watcherLog.FileDeleted(event.Path)
+				w.FileDeleted(event.Path)
 			}
 			if event.Type.String() == "Rename" {
 				originalPath, exists := event.Properties["OldPath"]
@@ -62,7 +52,7 @@ func StartWatcher(s *store.Store, opts options.Options, deleteJob *delete.Delete
 					logger.GlobalLogger.AddToLog("ERROR", "originalPath not found in properties")
 					continue
 				}
-				watcherLog.FileRenamed(event.Path, originalPath)
+				w.FileRenamed(event.Path, originalPath)
 			}
 		case error := <-broker.Error():
 			logger.GlobalLogger.AddToLog("ERROR", error.Error())
