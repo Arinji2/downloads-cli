@@ -41,11 +41,13 @@ func setupFS(t *testing.T, tempDir, moveType, name string) (fileName, testFile, 
 		}
 	}
 	formattedDestPath := strings.ReplaceAll(destPath, string(os.PathSeparator), move.CUSTOM_MOVE_SEPERATOR)
-	if parsedMove == move.MoveMD {
+	switch parsedMove {
+	case move.MoveMD:
 		formattedDestPath = "test"
-	} else if parsedMove == move.MoveMCD {
+	case move.MoveMCD:
 		formattedDestPath = "default#test"
 	}
+
 	copyOfDestPath := formattedDestPath
 	if runtime.GOOS == "windows" {
 		formattedDestPath = strings.Replace(formattedDestPath, ":", "_", 1)
