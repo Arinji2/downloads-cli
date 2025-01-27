@@ -13,8 +13,8 @@ func FoundDefaultMove(data store.StoredData, m *Move) (moved bool, destPath stri
 	core.UpdateProgress(data, true, m.Operations)
 	defer m.Operations.Store.DeleteStoredData(data.ID)
 
-	originalPath := data.Args[0]
-	destPath = m.MovePresets[data.Args[1]]
+	originalPath := data.RelativePath
+	destPath = m.MovePresets[data.Args[0]]
 	fileName := core.GetFilename(originalPath)
 
 	if destPath == "" || originalPath == "" {
@@ -42,8 +42,8 @@ func FoundCustomMove(data store.StoredData, m *Move) (moved bool, destPath strin
 	core.UpdateProgress(data, true, m.Operations)
 	defer m.Operations.Store.DeleteStoredData(data.ID)
 
-	originalPath := data.Args[0]
-	destPath = data.Args[1]
+	originalPath := data.RelativePath
+	destPath = data.Args[0]
 	fileName := core.GetFilename(originalPath)
 
 	if destPath == "" || originalPath == "" {
@@ -72,8 +72,8 @@ func FoundCustomDefaultMove(data store.StoredData, m *Move) (moved bool, destPat
 	core.UpdateProgress(data, true, m.Operations)
 	defer m.Operations.Store.DeleteStoredData(data.ID)
 
-	originalPath := data.Args[0]
-	destPath = data.Args[1]
+	originalPath := data.RelativePath
+	destPath = data.Args[0]
 	fileName := core.GetFilename(originalPath)
 
 	if destPath == "" || originalPath == "" {

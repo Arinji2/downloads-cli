@@ -56,10 +56,10 @@ func (m *Move) NewMoveRegistered(fileName string, pathName string) error {
 		ID:   id,
 		Task: "MOVE",
 		Args: []string{
-			pathName,
 			destPath,
 		},
-		InProgress: false,
+		RelativePath: pathName,
+		InProgress:   false,
 	}
 	m.Operations.Store.AddStoredData(storeFile)
 
