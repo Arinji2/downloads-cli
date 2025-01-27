@@ -39,8 +39,9 @@ func main() {
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 
 	<-stop
+
 	fmt.Println("Shutting down gracefully...")
-	s.Shutdown()
+	shutdown(s)
 }
 
 func setupOperations(s *store.Store, o *options.Options) {
@@ -64,4 +65,7 @@ func setupOperations(s *store.Store, o *options.Options) {
 	go deleteJob.RunDeleteJobs()
 	go moveJob.RunMoveJobs()
 	go linkJob.RunLinkJobs()
+
+	fmt.Println("Running Startup")
+	startup(o.DownloadsFolder, s, &w)
 }
