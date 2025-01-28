@@ -36,6 +36,7 @@ func FoundDefaultMove(data store.StoredData, m *Move) (moved bool, destPath stri
 	if err != nil {
 		return moved, "", err
 	}
+
 	return moved, destPath, nil
 }
 
