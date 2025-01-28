@@ -9,6 +9,7 @@ import (
 )
 
 func TestFoundLink_Perm(t *testing.T) {
+	t.Parallel()
 	s, tempDir, ops := setupTest(t)
 	fileName, testFile := setupFS(t, tempDir, "test", link.LinkPerm)
 	linkJob := link.InitLink(ops, 0)
@@ -60,6 +61,7 @@ func TestFoundLink_Perm(t *testing.T) {
 }
 
 func TestFoundLink_Temp(t *testing.T) {
+	t.Parallel()
 	typeOfLink := link.LinkTemp
 	s, tempDir, ops := setupTest(t)
 	fileName, testFile := setupFS(t, tempDir, "test", typeOfLink)
