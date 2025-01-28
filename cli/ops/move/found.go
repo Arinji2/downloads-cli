@@ -17,7 +17,7 @@ func FoundDefaultMove(data store.StoredData, m *Move) (moved bool, destPath stri
 
 	originalPath := data.RelativePath
 	destPath = m.MovePresets[data.Args[0]]
-	fileName := core.GetFilename(originalPath)
+	fileName := filepath.Base(originalPath)
 
 	if destPath == "" || originalPath == "" {
 		return false, "", fmt.Errorf("invalid data for move default")
@@ -50,7 +50,7 @@ func FoundCustomMove(data store.StoredData, m *Move) (moved bool, destPath strin
 
 	originalPath := data.RelativePath
 	destPath = data.Args[0]
-	fileName := core.GetFilename(originalPath)
+	fileName := filepath.Base(originalPath)
 
 	if destPath == "" || originalPath == "" {
 		return false, "", fmt.Errorf("invalid data for move default")
@@ -87,7 +87,7 @@ func FoundCustomDefaultMove(data store.StoredData, m *Move) (moved bool, destPat
 
 	originalPath := data.RelativePath
 	destPath = data.Args[0]
-	fileName := core.GetFilename(originalPath)
+	fileName := filepath.Base(originalPath)
 
 	if destPath == "" || originalPath == "" {
 		return false, "", fmt.Errorf("invalid data for move default")
