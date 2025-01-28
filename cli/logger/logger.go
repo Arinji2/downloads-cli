@@ -26,26 +26,32 @@ type notifier struct{}
 var GlobalLogger *Logger
 
 // NewLogger creates a new logger instance
-func NewLogger(logFile string, maxSize int64, appName string) (*Logger, error) {
-	if logFile == "" {
-		logFile = "log.txt"
+func NewLogger(logPath string, maxSize int64, appName string) (*Logger, error) {
+	if logPath == "" {
+		path, err := filepath.Abs("log.txt")
+		if err != nil {
+			return nil, fmt.Errorf("failed to get absolute path: %w", err)
+		}
+		logPath = path
 	}
 	if maxSize <= 0 {
 		maxSize = 1024 * 1024 // Default to 1MB
 	}
-
-	absPath, err := filepath.Abs(logFile)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get absolute path: %w", err)
+	if !filepath.IsAbs(logPath) {
+		absPath, err := filepath.Abs(logPath)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get absolute path: %w", err)
+		}
+		logPath = absPath
 	}
 
-	logDir := filepath.Dir(absPath)
+	logDir := filepath.Dir(logPath)
 	if err := os.MkdirAll(logDir, 0755); err != nil {
 		return nil, fmt.Errorf("failed to create log directory: %w", err)
 	}
 
 	return &Logger{
-		logFile:  absPath,
+		logFile:  logPath,
 		maxSize:  maxSize,
 		appName:  appName,
 		notifier: &notifier{},
@@ -56,8 +62,9 @@ func GlobalizeLogger(logger *Logger) {
 	GlobalLogger = logger
 }
 
-func SetupTestingLogger(t *testing.T) {
-	log, err := NewLogger("log.txt", 1024*1024, "TEST")
+func SetupTestingLogger(t *testing.T, workingDir string) {
+	logFile := filepath.Join(workingDir, "log.txt")
+	log, err := NewLogger(logFile, 1024*1024, "TEST")
 	if err != nil {
 		t.Fatalf("Failed to create logger: %v", err)
 	}

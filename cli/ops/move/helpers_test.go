@@ -69,11 +69,10 @@ func setupFS(t *testing.T, tempDir, moveType, name string) (fileName, testFile, 
 
 // setupTest initializes test environment with store and operations
 func setupTest(t *testing.T) (*store.Store, string, *ops.Operation) {
-	logger.SetupTestingLogger(t)
-
 	t.Helper()
-
 	tempDir := t.TempDir()
+	logger.SetupTestingLogger(t, tempDir)
+
 	storeFile := filepath.Join(tempDir, "test-store.json")
 
 	s := store.NewStore(storeFile)
