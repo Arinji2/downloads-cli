@@ -20,7 +20,6 @@ func main() {
 		panic(err)
 	}
 	s := store.InitStore(true)
-
 	log, err := logger.NewLogger(opts.LogFile, 1024*1024, "DOWNLOADS CLI")
 	if err != nil {
 		panic(err)
