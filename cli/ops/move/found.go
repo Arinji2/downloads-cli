@@ -2,7 +2,9 @@ package move
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/Arinji2/downloads-cli/ops/core"
@@ -31,11 +33,15 @@ func FoundDefaultMove(data store.StoredData, m *Move) (moved bool, destPath stri
 		return false, "", fmt.Errorf("invalid move type")
 	}
 
-	moved, destPath, err = core.MoveFile(originalPath, destPath, fileName, rawMoveType)
+	if !strings.HasSuffix(destPath, fileName) {
+		destPath = filepath.Join(destPath, fileName)
+	}
+
+	err = os.Rename(originalPath, destPath)
 	if err != nil {
 		return false, "", err
 	}
-	return moved, destPath, nil
+	return true, destPath, nil
 }
 
 func FoundCustomMove(data store.StoredData, m *Move) (moved bool, destPath string, err error) {
@@ -60,12 +66,19 @@ func FoundCustomMove(data store.StoredData, m *Move) (moved bool, destPath strin
 		return false, "", fmt.Errorf("invalid move type")
 	}
 
-	moved, destPath, err = core.MoveFile(originalPath, destPath, fileName, rawMoveType)
+	if !strings.HasSuffix(destPath, fileName) {
+		destPath = filepath.Join(destPath, fileName)
+	}
+	if runtime.GOOS == "windows" {
+		originalPath = core.WindowsMountIssue(originalPath)
+		destPath = core.WindowsMountIssue(destPath)
+	}
+	err = os.Rename(originalPath, destPath)
 	if err != nil {
 		return false, "", err
 	}
 
-	return moved, destPath, nil
+	return true, destPath, nil
 }
 
 func FoundCustomDefaultMove(data store.StoredData, m *Move) (moved bool, destPath string, err error) {
@@ -100,11 +113,13 @@ func FoundCustomDefaultMove(data store.StoredData, m *Move) (moved bool, destPat
 	if destPath == "" {
 		return false, "", fmt.Errorf("invalid move string for move default")
 	}
-
-	moved, destPath, err = core.MoveFile(originalPath, destPath, fileName, rawMoveType)
+	if !strings.HasSuffix(destPath, fileName) {
+		destPath = filepath.Join(destPath, fileName)
+	}
+	err = os.Rename(originalPath, destPath)
 	if err != nil {
 		return false, "", err
 	}
 
-	return moved, destPath, nil
+	return true, destPath, nil
 }
