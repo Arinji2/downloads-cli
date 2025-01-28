@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/Arinji2/downloads-cli/logger"
@@ -44,4 +45,28 @@ func setupTest(t *testing.T) (*store.Store, string, *ops.Operation) {
 
 	ops := ops.InitTestingOperations("LINK", s)
 	return s, tempDir, ops
+}
+
+func deleteUploadedFile(t *testing.T, destPath, userHash string, typeOfLink link.LinkType) {
+	t.Helper()
+
+	fileName := filepath.Base(destPath)
+	startingIndex := strings.Index(fileName, "#")
+	endingIndex := strings.Index(fileName, "&")
+	urlID := fileName[startingIndex+1 : endingIndex]
+
+	indexOfEqual := strings.Index(urlID, "=")
+	urlID = urlID[indexOfEqual+1:]
+	if len(urlID) == 0 {
+		t.Fatalf("Invalid urlID: %s", urlID)
+	}
+
+	upload := link.Upload{
+		UploadType: typeOfLink,
+		UserHash:   userHash,
+	}
+	err := upload.DeletedUploadedFile(urlID)
+	if err != nil {
+		t.Fatalf("Failed to delete uploaded file: %v", err)
+	}
 }
