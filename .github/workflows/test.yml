@@ -4,11 +4,11 @@ on:
     branches: [ "*" ]
     tags: [ "*" ]
     paths:
-      - 'cli/**' # Only trigger if files in ./cli are changed
+      - 'cli/**'
   pull_request:
     branches: [ main, master ]
     paths:
-      - 'cli/**' # Only trigger for PRs modifying files in ./cli
+      - 'cli/**'
 
 jobs:
   test:
@@ -27,8 +27,9 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: ${{ matrix.go-version }}
+        go-version: ${{ matrix.go-version}}
         cache: true
+        cache-dependency-path: cli/go.sum  # Add this line
 
     - name: Install dependencies
       run: go mod download
