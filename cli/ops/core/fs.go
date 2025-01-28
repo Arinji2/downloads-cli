@@ -7,12 +7,12 @@ import (
 	"strings"
 )
 
-func MoveFile(originalPath, destPath, fileName string) (bool, string, error) {
+func MoveFile(originalPath, destPath, fileName, moveType string) (bool, string, error) {
 	if !strings.HasSuffix(destPath, fileName) {
 		destPath = filepath.Join(destPath, fileName)
 	}
 
-	if runtime.GOOS == "windows" {
+	if runtime.GOOS == "windows" && moveType == "mc" {
 		originalPath = WindowsMountIssue(originalPath)
 		destPath = WindowsMountIssue(destPath)
 	}
