@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	"github.com/Arinji2/downloads-cli/ops/core"
@@ -66,19 +65,12 @@ func FoundCustomMove(data store.StoredData, m *Move) (moved bool, destPath strin
 		return false, "", fmt.Errorf("invalid move type")
 	}
 
-	if !strings.HasSuffix(destPath, fileName) {
-		destPath = filepath.Join(destPath, fileName)
-	}
-	if runtime.GOOS == "windows" {
-		originalPath = core.WindowsMountIssue(originalPath)
-		destPath = core.WindowsMountIssue(destPath)
-	}
-	err = os.Rename(originalPath, destPath)
+	moved, destPath, err = core.MoveFile(originalPath, destPath, fileName)
 	if err != nil {
-		return false, "", err
+		return moved, "", err
 	}
 
-	return true, destPath, nil
+	return moved, destPath, nil
 }
 
 func FoundCustomDefaultMove(data store.StoredData, m *Move) (moved bool, destPath string, err error) {

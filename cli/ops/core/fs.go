@@ -6,23 +6,18 @@ import (
 	"strings"
 )
 
-// func MoveFile(originalPath, destPath, fileName, moveType string) (bool, string, error) {
-// 	if !strings.HasSuffix(destPath, fileName) {
-// 		destPath = filepath.Join(destPath, fileName)
-// 	}
-//
-// 	if runtime.GOOS == "windows" && moveType == "mc" {
-// 		originalPath = WindowsMountIssue(originalPath)
-// 		destPath = WindowsMountIssue(destPath)
-// 	}
-//
-// 	err := os.Rename(originalPath, destPath)
-// 	if err != nil {
-// 		return false, "", err
-// 	}
-//
-// 	return true, destPath, nil
-// }
+func MoveFile(originalPath, destPath, fileName string) (bool, string, error) {
+	if !strings.HasSuffix(destPath, fileName) {
+		destPath = filepath.Join(destPath, fileName)
+	}
+
+	err := os.Rename(originalPath, destPath)
+	if err != nil {
+		return false, "", err
+	}
+
+	return true, destPath, nil
+}
 
 func RenameToFilename(destPath string) (bool, error) {
 	parts := strings.Split(destPath, "-")
