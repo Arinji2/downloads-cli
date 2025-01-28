@@ -32,15 +32,11 @@ func FoundDefaultMove(data store.StoredData, m *Move) (moved bool, destPath stri
 		return false, "", fmt.Errorf("invalid move type")
 	}
 
-	if !strings.HasSuffix(destPath, fileName) {
-		destPath = filepath.Join(destPath, fileName)
-	}
-
-	err = os.Rename(originalPath, destPath)
+	moved, destPath, err = core.MoveFile(originalPath, destPath, fileName)
 	if err != nil {
-		return false, "", err
+		return moved, "", err
 	}
-	return true, destPath, nil
+	return moved, destPath, nil
 }
 
 func FoundCustomMove(data store.StoredData, m *Move) (moved bool, destPath string, err error) {
@@ -104,13 +100,10 @@ func FoundCustomDefaultMove(data store.StoredData, m *Move) (moved bool, destPat
 	if destPath == "" {
 		return false, "", fmt.Errorf("invalid move string for move default")
 	}
-	if !strings.HasSuffix(destPath, fileName) {
-		destPath = filepath.Join(destPath, fileName)
-	}
-	err = os.Rename(originalPath, destPath)
+	moved, destPath, err = core.MoveFile(originalPath, destPath, fileName)
 	if err != nil {
-		return false, "", err
+		return moved, "", err
 	}
 
-	return true, destPath, nil
+	return moved, destPath, nil
 }
