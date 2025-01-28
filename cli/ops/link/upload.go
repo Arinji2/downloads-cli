@@ -3,6 +3,7 @@ package link
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -12,8 +13,9 @@ import (
 )
 
 type Upload struct {
-	uploadType LinkType
-	filePath   string
+	UploadType LinkType
+	FilePath   string
+	UserHash   string
 }
 
 type Endpoint struct {
@@ -39,12 +41,12 @@ func getEndpoint(linkType LinkType) Endpoint {
 }
 
 func (u *Upload) UploadData() (string, error) {
-	file, err := os.ReadFile(u.filePath)
+	file, err := os.ReadFile(u.FilePath)
 	if err != nil {
 		return "", err
 	}
 
-	fileName := filepath.Base(u.filePath)
+	fileName := filepath.Base(u.FilePath)
 
 	r, w := io.Pipe()
 	m := multipart.NewWriter(w)
@@ -54,8 +56,11 @@ func (u *Upload) UploadData() (string, error) {
 		defer m.Close()
 
 		m.WriteField("reqtype", "fileupload")
-		if u.uploadType == LinkTemp {
+		if u.UploadType == LinkTemp {
 			m.WriteField("time", "1h")
+		}
+		if u.UserHash != "" {
+			m.WriteField("userhash", u.UserHash)
 		}
 		part, err := m.CreateFormFile("fileToUpload", filepath.Base(fileName))
 		if err != nil {
@@ -65,7 +70,7 @@ func (u *Upload) UploadData() (string, error) {
 			return
 		}
 	}()
-	endpoint := getEndpoint(u.uploadType)
+	endpoint := getEndpoint(u.UploadType)
 	if endpoint.domain == "" {
 		return "", errors.New("invalid upload type")
 	}
@@ -91,4 +96,51 @@ func (u *Upload) UploadData() (string, error) {
 		return string(body), nil
 	}
 	return "", errors.New("invalid response from endpoint")
+}
+
+func (u *Upload) DeletedUploadedFile(uploadID string) error {
+	r, w := io.Pipe()
+	m := multipart.NewWriter(w)
+
+	go func() {
+		defer w.Close()
+		defer m.Close()
+
+		if err := m.WriteField("reqtype", "deletefiles"); err != nil {
+			w.CloseWithError(err)
+			return
+		}
+		if err := m.WriteField("userhash", u.UserHash); err != nil {
+			w.CloseWithError(err)
+			return
+		}
+		if err := m.WriteField("files", uploadID); err != nil {
+			w.CloseWithError(err)
+			return
+		}
+	}()
+
+	endpoint := getEndpoint(u.UploadType)
+	if endpoint.domain == "" {
+		return errors.New("invalid upload type")
+	}
+
+	req, err := http.NewRequest(http.MethodPost, endpoint.domain, r)
+	if err != nil {
+		return err
+	}
+	req.Header.Add("Content-Type", m.FormDataContentType())
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("invalid status code: %d", resp.StatusCode)
+	}
+
+	return nil
 }

@@ -13,10 +13,9 @@ import (
 )
 
 // setupFS creates necessary test files and directories
-func setupFS(t *testing.T, tempDir, name string, typeOfLink link.LinkType) (fileName, testFile, destPath string) {
+func setupFS(t *testing.T, tempDir, name string, typeOfLink link.LinkType) (fileName, testFile string) {
 	t.Helper()
-
-	destPath = filepath.Join(tempDir, "test")
+	destPath := filepath.Join(tempDir, "test")
 	if err := os.MkdirAll(destPath, 0755); err != nil {
 		t.Fatalf("Failed to create test directory: %v", err)
 	}
@@ -27,7 +26,7 @@ func setupFS(t *testing.T, tempDir, name string, typeOfLink link.LinkType) (file
 		t.Fatalf("Failed to create test file: %v", err)
 	}
 
-	return fileName, testFile, destPath
+	return fileName, testFile
 }
 
 // setupTest initializes test environment with store and operations

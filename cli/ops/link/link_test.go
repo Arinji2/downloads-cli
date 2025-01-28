@@ -9,7 +9,7 @@ import (
 func TestNewLinkRegistered(t *testing.T) {
 	s, tempDir, ops := setupTest(t)
 
-	fileName, testFile, _ := setupFS(t, tempDir, "test", link.LinkType("t"))
+	fileName, testFile := setupFS(t, tempDir, "test", link.LinkType("t"))
 	linkJob := link.InitLink(ops, 0)
 
 	if err := linkJob.NewLinkRegistered(fileName, testFile); err != nil {
