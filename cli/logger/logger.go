@@ -71,7 +71,6 @@ func SetupTestingLogger(t *testing.T, workingDir string) {
 	GlobalLogger = log
 }
 
-// AddToLog adds a new entry to the log file
 func (l *Logger) AddToLog(errorType, msg string) error {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
@@ -96,7 +95,6 @@ func (l *Logger) AddToLog(errorType, msg string) error {
 	return nil
 }
 
-// checkLogFile ensures the log file exists and handles rotation
 func (l *Logger) checkLogFile() error {
 	info, err := os.Stat(l.logFile)
 	if err != nil {
@@ -127,7 +125,6 @@ func (l *Logger) checkLogFile() error {
 	return nil
 }
 
-// Notify sends a notification using the platform-specific implementation
 func (l *Logger) Notify(msg string) error {
 	return l.notifier.Notify(l.appName, msg)
 }
