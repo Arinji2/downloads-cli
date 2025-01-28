@@ -29,7 +29,7 @@ jobs:
       with:
         go-version: ${{ matrix.go-version}}
         cache: true
-        cache-dependency-path: cli/go.sum  # Add this line
+        cache-dependency-path: cli/go.sum  
 
     - name: Install dependencies
       run: go mod download
