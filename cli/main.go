@@ -14,6 +14,7 @@ import (
 	"github.com/Arinji2/downloads-cli/options"
 	"github.com/Arinji2/downloads-cli/store"
 	"github.com/Arinji2/downloads-cli/watcher"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
