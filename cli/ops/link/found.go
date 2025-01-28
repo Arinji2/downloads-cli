@@ -45,6 +45,7 @@ func FoundLink(data store.StoredData, l *Link) (bool, string, error) {
 		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		return false, "", err
 	}
+
 	if !linked {
 		return false, "", fmt.Errorf("failed to rename file to link")
 	}
