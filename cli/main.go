@@ -53,7 +53,12 @@ func setupOperations(s *store.Store, o *options.Options) {
 	moveJob := move.InitMove(moveOps, o.CheckInterval.Move, o.MovePresets)
 
 	linkOps := ops.InitOperations("LINK", s)
-	linkJob := link.InitLink(linkOps, o.CheckInterval.Delete)
+	var linkJob *link.Link
+	if o.UserHash != "" {
+		linkJob = link.InitLink(linkOps, o.CheckInterval.Delete, o.UserHash)
+	} else {
+		linkJob = link.InitLink(linkOps, o.CheckInterval.Delete, "")
+	}
 
 	w := watcher.WatcherLog{
 		Store:      s,

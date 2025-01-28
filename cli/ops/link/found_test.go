@@ -12,7 +12,7 @@ func TestFoundLink_Perm(t *testing.T) {
 	t.Parallel()
 	s, tempDir, ops := setupTest(t)
 	fileName, testFile := setupFS(t, tempDir, "test", link.LinkPerm)
-	linkJob := link.InitLink(ops, 0)
+	linkJob := link.InitLink(ops, 0, "")
 	userHash, found := os.LookupEnv("USERHASH")
 	if !found {
 		t.Fatalf("USERHASH not found")
@@ -65,7 +65,7 @@ func TestFoundLink_Temp(t *testing.T) {
 	typeOfLink := link.LinkTemp
 	s, tempDir, ops := setupTest(t)
 	fileName, testFile := setupFS(t, tempDir, "test", typeOfLink)
-	linkJob := link.InitLink(ops, 0)
+	linkJob := link.InitLink(ops, 0, "")
 
 	if err := linkJob.NewLinkRegistered(fileName, testFile); err != nil {
 		t.Fatalf("Failed to register new link: %v", err)

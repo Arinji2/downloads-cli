@@ -10,7 +10,7 @@ func TestNewLinkRegistered(t *testing.T) {
 	s, tempDir, ops := setupTest(t)
 
 	fileName, testFile := setupFS(t, tempDir, "test", link.LinkType("t"))
-	linkJob := link.InitLink(ops, 0)
+	linkJob := link.InitLink(ops, 0, "")
 
 	if err := linkJob.NewLinkRegistered(fileName, testFile); err != nil {
 		t.Fatalf("Failed to register new link: %v", err)

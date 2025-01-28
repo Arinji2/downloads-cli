@@ -26,13 +26,21 @@ type Link struct {
 	UserHash      string
 }
 
-func InitLink(o *ops.Operation, interval int) *Link {
+func InitLink(o *ops.Operation, interval int, userHash string) *Link {
 	if interval == 0 {
 		interval = DEFAULT_LINK_INTERVAL
 	}
-	return &Link{
-		Operations:    o,
-		CheckInterval: interval,
+	if userHash != "" {
+		return &Link{
+			Operations:    o,
+			CheckInterval: interval,
+			UserHash:      userHash,
+		}
+	} else {
+		return &Link{
+			Operations:    o,
+			CheckInterval: interval,
+		}
 	}
 }
 
