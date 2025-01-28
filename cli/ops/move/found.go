@@ -102,8 +102,7 @@ func FoundCustomDefaultMove(data store.StoredData, m *Move) (moved bool, destPat
 	if moveType != MoveMCD {
 		return false, "", fmt.Errorf("invalid move type")
 	}
-
-	destPathParts := strings.Split(destPath, "/")
+	destPathParts := strings.Split(destPath, string(os.PathSeparator))
 	destPathFromDefault, ok := m.MovePresets[destPathParts[0]]
 	if !ok {
 		return false, "", fmt.Errorf("invalid move preset")
