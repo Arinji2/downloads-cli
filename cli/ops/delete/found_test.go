@@ -8,6 +8,7 @@ import (
 )
 
 func TestFoundDelete_Valid(t *testing.T) {
+	t.Parallel()
 	s, tempDir, ops := setupTest(t)
 
 	fileName, testFile, _ := setupFS(t, tempDir, "test", "1s")
@@ -45,6 +46,7 @@ func TestFoundDelete_Valid(t *testing.T) {
 }
 
 func TestFoundDelete_Invalid(t *testing.T) {
+	t.Parallel()
 	s, tempDir, ops := setupTest(t)
 
 	fileName, testFile, _ := setupFS(t, tempDir, "test", "2s")
