@@ -21,6 +21,9 @@ export default {
           grey: "#929292",
         },
       },
+      boxShadow: {
+        "terminal-shadow": "7px 7px 3px #1B1B1B",
+      },
     },
   },
   plugins: [],

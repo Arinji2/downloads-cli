@@ -22,5 +22,5 @@ export default function RedirectButton() {
   useEffect(() => {
     redirectFunc();
   }, []);
-  return <div></div>;
+  return <></>;
 }
