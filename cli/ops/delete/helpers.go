@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/Arinji2/downloads-cli/logger"
-	"github.com/Arinji2/downloads-cli/utils"
+	"github.com/Arinji2/downloads-cli/ops/core"
 )
 
 func verifyDelete(fileName string) (timeStr string, err error) {
@@ -22,7 +22,7 @@ func verifyDelete(fileName string) (timeStr string, err error) {
 		return "", fmt.Errorf("invalid file name for delete")
 	}
 
-	_, err = utils.GetOperationType(fileName)
+	_, err = core.GetOperationType(fileName)
 	if err != nil {
 		return "", err
 	}

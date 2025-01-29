@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/Arinji2/downloads-cli/logger"
-	"github.com/Arinji2/downloads-cli/utils"
+	"github.com/Arinji2/downloads-cli/ops/core"
 )
 
 func verifyMove(fileName string, m *Move) (err error) {
@@ -21,11 +21,10 @@ func verifyMove(fileName string, m *Move) (err error) {
 	if len(nameParts) < 3 {
 		return fmt.Errorf("invalid file name for move")
 	}
-	rawMoveType, err := utils.GetOperationType(fileName)
+	rawMoveType, err := core.GetOperationType(fileName)
 	if err != nil {
 		return err
 	}
-
 	moveStr := nameParts[1]
 	moveType := MoveType(rawMoveType)
 	switch moveType {
@@ -42,6 +41,7 @@ func verifyMove(fileName string, m *Move) (err error) {
 		}
 		return nil
 	case MoveMCD:
+
 		locOfPrefix := strings.Index(moveStr, "#")
 		if locOfPrefix == -1 {
 			return fmt.Errorf("invalid move string for move default custom")

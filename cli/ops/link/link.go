@@ -4,8 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/Arinji2/downloads-cli/logger"
@@ -25,15 +23,24 @@ const (
 type Link struct {
 	Operations    *ops.Operation
 	CheckInterval int
+	UserHash      string
 }
 
-func InitLink(o *ops.Operation, interval int) *Link {
+func InitLink(o *ops.Operation, interval int, userHash string) *Link {
 	if interval == 0 {
 		interval = DEFAULT_LINK_INTERVAL
 	}
-	return &Link{
-		Operations:    o,
-		CheckInterval: interval,
+	if userHash != "" {
+		return &Link{
+			Operations:    o,
+			CheckInterval: interval,
+			UserHash:      userHash,
+		}
+	} else {
+		return &Link{
+			Operations:    o,
+			CheckInterval: interval,
+		}
 	}
 }
 
@@ -62,9 +69,9 @@ func (l *Link) NewLinkRegistered(fileName string, pathName string) error {
 		Args: []string{
 			fileName,
 			string(linkType),
-			pathName,
 		},
-		InProgress: false,
+		RelativePath: pathName,
+		InProgress:   false,
 	}
 
 	l.Operations.Store.AddStoredData(storeFile)
@@ -86,24 +93,13 @@ func (l *Link) RunLinkJobs() {
 				if data.InProgress {
 					continue
 				}
-				created, url, err := FoundLink(data, l)
-				lastIndex := strings.LastIndex(url, "/")
-				urlID := url[lastIndex+1:]
+				created, _, err := FoundLink(data, l)
 				if err != nil {
 					logger.GlobalLogger.AddToLog("ERROR", err.Error())
 					continue
 				}
 				if !created {
-					continue
-				}
-				typeOfLink := LinkType(data.Args[1])
-				if typeOfLink != LinkPerm && typeOfLink != LinkTemp {
-					continue
-				}
-				path := data.Args[2]
-				_, err = RenameToLink(urlID, typeOfLink, path)
-				if err != nil {
-					logger.GlobalLogger.AddToLog("ERROR", err.Error())
+					logger.GlobalLogger.AddToLog("ERROR", fmt.Sprintf("failed to create link for file: %s", data.Args[0]))
 					continue
 				}
 				logger.GlobalLogger.Notify(fmt.Sprintf("Created link for file: %s", data.Args[0]))
@@ -111,16 +107,4 @@ func (l *Link) RunLinkJobs() {
 			}
 		}
 	}
-}
-
-func RenameToLink(urlID string, typeOfLink LinkType, path string) (bool, error) {
-	fileName := filepath.Base(path)
-	url := fmt.Sprintf("dos.arinji.com#urlID=%s&type=%s", urlID, typeOfLink)
-
-	newPath := strings.ReplaceAll(path, fileName, url)
-	err := os.Rename(path, newPath)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
 }

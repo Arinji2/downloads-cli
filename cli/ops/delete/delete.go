@@ -47,9 +47,9 @@ func (d *Delete) NewDeleteRegistered(fileName string, pathName string) error {
 		Args: []string{
 			fileName,
 			formattedTime,
-			pathName,
 		},
-		InProgress: false,
+		RelativePath: pathName,
+		InProgress:   false,
 	}
 
 	d.Operations.Store.AddStoredData(storeFile)

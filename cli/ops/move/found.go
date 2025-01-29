@@ -4,116 +4,107 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 
+	"github.com/Arinji2/downloads-cli/ops/core"
 	"github.com/Arinji2/downloads-cli/store"
-	"github.com/Arinji2/downloads-cli/utils"
 )
 
 func FoundDefaultMove(data store.StoredData, m *Move) (moved bool, destPath string, err error) {
-	data.InProgress = true
-	m.Operations.Store.UpdateStoredData(data.ID, data)
-	rawMoveType, err := utils.GetOperationType(data.Args[0])
+	core.UpdateProgress(data, true, m.Operations)
+	defer m.Operations.Store.DeleteStoredData(data.ID)
+
+	originalPath := data.RelativePath
+	destPath = m.MovePresets[data.Args[0]]
+	fileName := filepath.Base(originalPath)
+
+	if destPath == "" || originalPath == "" {
+		return false, "", fmt.Errorf("invalid data for move default")
+	}
+
+	rawMoveType, err := core.GetOperationType(originalPath)
 	if err != nil {
 		return false, "", err
 	}
+
 	moveType := MoveType(rawMoveType)
 	if moveType != MoveMD {
 		return false, "", fmt.Errorf("invalid move type")
 	}
-	fileName := data.Args[0]
-	originalPath := data.Args[1]
-	destPath = m.MovePresets[data.Args[2]]
-	m.Operations.Store.DeleteStoredData(data.ID)
-	if destPath == "" {
-		return false, "", fmt.Errorf("invalid move string for move default")
-	}
-	if !strings.HasSuffix(destPath, fileName) {
-		destPath = filepath.Join(destPath, fileName)
+
+	moved, destPath, err = core.MoveFile(originalPath, destPath, fileName)
+	if err != nil {
+		return moved, "", err
 	}
 
-	err = os.Rename(originalPath, destPath)
-	if err != nil {
-		return false, "", err
-	}
-	return true, destPath, nil
+	return moved, destPath, nil
 }
 
 func FoundCustomMove(data store.StoredData, m *Move) (moved bool, destPath string, err error) {
-	data.InProgress = true
-	m.Operations.Store.UpdateStoredData(data.ID, data)
-	rawMoveType, err := utils.GetOperationType(data.Args[0])
+	core.UpdateProgress(data, true, m.Operations)
+	defer m.Operations.Store.DeleteStoredData(data.ID)
+
+	originalPath := data.RelativePath
+	destPath = data.Args[0]
+	fileName := filepath.Base(originalPath)
+
+	if destPath == "" || originalPath == "" {
+		return false, "", fmt.Errorf("invalid data for move default")
+	}
+
+	rawMoveType, err := core.GetOperationType(originalPath)
 	if err != nil {
 		return false, "", err
 	}
+
 	moveType := MoveType(rawMoveType)
 	if moveType != MoveMC {
 		return false, "", fmt.Errorf("invalid move type")
 	}
-	fileName := data.Args[0]
-	originalPath := data.Args[1]
-	destPath = data.Args[2]
-	if !strings.HasSuffix(destPath, fileName) {
-		destPath = filepath.Join(destPath, fileName)
-	}
-	m.Operations.Store.DeleteStoredData(data.ID)
-	if runtime.GOOS == "windows" {
-		originalPath = utils.WindowsMountIssue(originalPath)
-		destPath = utils.WindowsMountIssue(destPath)
-	}
-	err = os.Rename(originalPath, destPath)
+
+	moved, destPath, err = core.MoveFile(originalPath, destPath, fileName)
 	if err != nil {
-		return false, "", err
+		return moved, "", err
 	}
-	return true, destPath, nil
+
+	return moved, destPath, nil
 }
 
 func FoundCustomDefaultMove(data store.StoredData, m *Move) (moved bool, destPath string, err error) {
-	data.InProgress = true
-	m.Operations.Store.UpdateStoredData(data.ID, data)
-	rawMoveType, err := utils.GetOperationType(data.Args[0])
+	core.UpdateProgress(data, true, m.Operations)
+	defer m.Operations.Store.DeleteStoredData(data.ID)
+
+	originalPath := data.RelativePath
+	destPath = data.Args[0]
+	fileName := filepath.Base(originalPath)
+
+	if destPath == "" || originalPath == "" {
+		return false, "", fmt.Errorf("invalid data for move default")
+	}
+
+	rawMoveType, err := core.GetOperationType(originalPath)
 	if err != nil {
 		return false, "", err
 	}
+
 	moveType := MoveType(rawMoveType)
 	if moveType != MoveMCD {
 		return false, "", fmt.Errorf("invalid move type")
 	}
-	fileName := data.Args[0]
-	originalPath := data.Args[1]
-	destinationPath := data.Args[2]
-
-	destPathParts := strings.Split(destinationPath, "/")
-	destPath, ok := m.MovePresets[destPathParts[0]]
+	destPathParts := strings.Split(destPath, string(os.PathSeparator))
+	destPathFromDefault, ok := m.MovePresets[destPathParts[0]]
 	if !ok {
 		return false, "", fmt.Errorf("invalid move preset")
 	}
 
-	destPath = filepath.Join(destPath, filepath.Join(destPathParts[1:]...))
-	m.Operations.Store.DeleteStoredData(data.ID)
+	destPath = filepath.Join(destPathFromDefault, filepath.Join(destPathParts[1:]...))
 	if destPath == "" {
 		return false, "", fmt.Errorf("invalid move string for move default")
 	}
-	if !strings.HasSuffix(destPath, fileName) {
-		destPath = filepath.Join(destPath, fileName)
+	moved, destPath, err = core.MoveFile(originalPath, destPath, fileName)
+	if err != nil {
+		return moved, "", err
 	}
 
-	err = os.Rename(originalPath, destPath)
-	if err != nil {
-		return false, "", err
-	}
-	return true, destPath, nil
-}
-
-func RenameToFilename(destPath string) (bool, error) {
-	parts := strings.Split(destPath, "-")
-	fileName := parts[len(parts)-1]
-	dir := filepath.Dir(destPath)
-	modified := filepath.Join(dir, fileName)
-	err := os.Rename(destPath, modified)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
+	return moved, destPath, nil
 }

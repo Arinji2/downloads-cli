@@ -31,15 +31,10 @@ func setupFS(t *testing.T, tempDir, name, timeToDelete string) (fileName, testFi
 
 // setupTest initializes test environment with store and operations
 func setupTest(t *testing.T) (*store.Store, string, *ops.Operation) {
-	log, err := logger.NewLogger("log.txt", 1024*1024, "TEST")
-	if err != nil {
-		t.Fatalf("Failed to create logger: %v", err)
-	}
-	logger.GlobalizeLogger(log)
-
 	t.Helper()
-
 	tempDir := t.TempDir()
+	logger.SetupTestingLogger(t, tempDir)
+
 	storeFile := filepath.Join(tempDir, "test-store.json")
 
 	s := store.NewStore(storeFile)

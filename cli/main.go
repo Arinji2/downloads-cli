@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/Arinji2/downloads-cli/logger"
 	"github.com/Arinji2/downloads-cli/ops"
@@ -11,6 +14,7 @@ import (
 	"github.com/Arinji2/downloads-cli/options"
 	"github.com/Arinji2/downloads-cli/store"
 	"github.com/Arinji2/downloads-cli/watcher"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
@@ -19,7 +23,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	s := store.InitStore(true)
+	s := store.InitStore(false)
+
 	log, err := logger.NewLogger(opts.LogFile, 1024*1024, "DOWNLOADS CLI")
 	if err != nil {
 		panic(err)
@@ -31,7 +36,13 @@ func main() {
 	log.Notify("DOWNLOADS CLI STARTED SUCCESSFULLY")
 	log.AddToLog("INFO", "DOWNLOADS CLI STARTED SUCCESSFULLY")
 
-	<-make(chan struct{})
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+
+	<-stop
+
+	fmt.Println("Shutting down gracefully...")
+	shutdown(s)
 }
 
 func setupOperations(s *store.Store, o *options.Options) {
@@ -42,7 +53,12 @@ func setupOperations(s *store.Store, o *options.Options) {
 	moveJob := move.InitMove(moveOps, o.CheckInterval.Move, o.MovePresets)
 
 	linkOps := ops.InitOperations("LINK", s)
-	linkJob := link.InitLink(linkOps, o.CheckInterval.Delete)
+	var linkJob *link.Link
+	if o.UserHash != "" {
+		linkJob = link.InitLink(linkOps, o.CheckInterval.Delete, o.UserHash)
+	} else {
+		linkJob = link.InitLink(linkOps, o.CheckInterval.Delete, "")
+	}
 
 	w := watcher.WatcherLog{
 		Store:      s,
@@ -55,4 +71,7 @@ func setupOperations(s *store.Store, o *options.Options) {
 	go deleteJob.RunDeleteJobs()
 	go moveJob.RunMoveJobs()
 	go linkJob.RunLinkJobs()
+
+	fmt.Println("Running Startup")
+	startup(o.DownloadsFolder, s, &w)
 }

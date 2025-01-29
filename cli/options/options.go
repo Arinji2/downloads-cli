@@ -16,6 +16,7 @@ type Options struct {
 	LogFile         string            `json:"log_file"`
 	CheckInterval   CheckInterval     `json:"check_interval"`
 	MovePresets     map[string]string `json:"move_presets"`
+	UserHash        string            `json:"user_hash"` // Userhash from catbox.moe for perm links
 }
 
 var OPTIONS_FILENAME = "options.json"

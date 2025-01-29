@@ -36,7 +36,6 @@ func TestFoundDefaultMove_Valid(t *testing.T) {
 	if destPath == "" {
 		t.Error("Expected destPath to be set")
 	}
-
 	file, err := os.Stat(destPath)
 	if err != nil {
 		t.Fatalf("Failed to stat file: %v", err)
@@ -45,7 +44,6 @@ func TestFoundDefaultMove_Valid(t *testing.T) {
 		t.Error("Expected file to be a file")
 	}
 
-	// Verify cleanup
 	data, err = s.GetAllStoredData()
 	if err != nil {
 		t.Fatalf("Failed to get stored data: %v", err)
@@ -75,7 +73,7 @@ func TestFoundDefaultMove_Broken(t *testing.T) {
 		t.Fatalf("Expected 1 stored data, got %d", len(data))
 	}
 
-	data[0].Args[2] = "testBroken"
+	data[0].Args[0] = "testBroken"
 	moved, _, err := move.FoundDefaultMove(data[0], moveJob)
 	if err == nil {
 		t.Error("Expected error, got nil")
@@ -84,7 +82,6 @@ func TestFoundDefaultMove_Broken(t *testing.T) {
 		t.Error("Expected moved to be false")
 	}
 
-	// Verify cleanup
 	data, err = s.GetAllStoredData()
 	if err != nil {
 		t.Fatalf("Failed to get stored data: %v", err)
@@ -148,7 +145,7 @@ func TestFoundCustomMove_Broken(t *testing.T) {
 		t.Fatalf("Expected 1 stored data, got %d", len(data))
 	}
 
-	data[0].Args[2] = filepath.Join(destPath, "brokenTest")
+	data[0].Args[0] = filepath.Join(destPath, "brokenTest")
 	moved, _, err := move.FoundCustomMove(data[0], moveJob)
 	if err == nil {
 		t.Error("Expected error, got nil")
@@ -157,12 +154,50 @@ func TestFoundCustomMove_Broken(t *testing.T) {
 		t.Error("Expected moved to be false")
 	}
 
-	// Verify cleanup
 	storedData, err := s.GetAllStoredData()
 	if err != nil {
 		t.Fatalf("Failed to get stored data: %v", err)
 	}
 	if len(storedData) != 0 {
 		t.Errorf("Expected 0 stored data, got %d", len(storedData))
+	}
+}
+
+func TestFoundCustomDefaultMove_Valid(t *testing.T) {
+	s, tempDir, ops := setupTest(t)
+	fileName, testFile, destPath := setupFS(t, tempDir, "mcd", "test")
+	moveJob := move.InitMove(ops, 0, map[string]string{
+		"default": destPath,
+	})
+	if err := moveJob.NewMoveRegistered(fileName, testFile); err != nil {
+		t.Fatalf("Failed to register new move: %v", err)
+	}
+
+	data, err := s.GetAllStoredData()
+	if err != nil {
+		t.Fatalf("Failed to get stored data: %v", err)
+	}
+
+	if len(data) != 1 {
+		t.Fatalf("Expected 1 stored data, got %d", len(data))
+	}
+
+	moved, destPath, err := move.FoundCustomDefaultMove(data[0], moveJob)
+	if err != nil {
+		t.Fatalf("FoundCustomDefaultMove failed: %v", err)
+	}
+	if !moved {
+		t.Error("Expected moved to be true")
+	}
+
+	if destPath == "" {
+		t.Error("Expected destPath to be set")
+	}
+	file, err := os.Stat(destPath)
+	if err != nil {
+		t.Fatalf("Failed to stat file: %v", err)
+	}
+	if file.IsDir() {
+		t.Error("Expected file to be a file")
 	}
 }

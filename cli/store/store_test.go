@@ -11,9 +11,10 @@ import (
 )
 
 func setupTest(t *testing.T) (*store.Store, string) {
-	logger.SetupTestingLogger(t)
 	t.Helper()
 	tempDir := t.TempDir()
+	logger.SetupTestingLogger(t, tempDir)
+
 	storeFile := filepath.Join(tempDir, "test-store.json")
 
 	s := store.NewStore(storeFile)

@@ -7,11 +7,11 @@ import (
 	"time"
 
 	"github.com/Arinji2/downloads-cli/logger"
+	"github.com/Arinji2/downloads-cli/ops/core"
 	"github.com/Arinji2/downloads-cli/ops/delete"
 	"github.com/Arinji2/downloads-cli/ops/link"
 	"github.com/Arinji2/downloads-cli/ops/move"
 	"github.com/Arinji2/downloads-cli/store"
-	"github.com/Arinji2/downloads-cli/utils"
 )
 
 type DeletedFile struct {
@@ -26,38 +26,49 @@ type WatcherLog struct {
 	LinkJobs   link.Link
 }
 
-func (w *WatcherLog) FileCreated(path string) {
+func (w *WatcherLog) FileCreated(path string) bool {
 	fileParts := strings.Split(path, string(os.PathSeparator))
 	fileName := fileParts[len(fileParts)-1]
-	operationType, err := utils.GetOperationType(fileName)
+	operationType, err := core.GetOperationType(fileName)
 	if err != nil {
 		logger.GlobalLogger.AddToLog("ERROR", err.Error())
-		return
+		return false
 	}
 	switch operationType {
+
 	case "d":
 		err := w.DeleteJobs.NewDeleteRegistered(fileName, path)
 		if err != nil {
 			err = fmt.Errorf("error creating delete job: %v", err)
 			logger.GlobalLogger.AddToLog("ERROR", err.Error())
+			return false
 		}
+
 	case "md":
+		fallthrough
 	case "mc":
+		fallthrough
 	case "mcd":
 		err := w.MoveJobs.NewMoveRegistered(fileName, path)
 		if err != nil {
 			err = fmt.Errorf("error creating move job: %v", err)
 			logger.GlobalLogger.AddToLog("ERROR", err.Error())
+			return false
 		}
+
 	case "l":
 		err := w.LinkJobs.NewLinkRegistered(fileName, path)
 		if err != nil {
 			err = fmt.Errorf("error creating link job: %v", err)
 			logger.GlobalLogger.AddToLog("ERROR", err.Error())
+			return false
 		}
+
 	default:
 		logger.GlobalLogger.AddToLog("ERROR", fmt.Sprintf("invalid operation type: %s", operationType))
+		return false
 	}
+	return true
 }
 
 func (w *WatcherLog) FileDeleted(path string) {

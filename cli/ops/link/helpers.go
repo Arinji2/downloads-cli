@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/Arinji2/downloads-cli/logger"
-	"github.com/Arinji2/downloads-cli/utils"
+	"github.com/Arinji2/downloads-cli/ops/core"
 )
 
 func verifyLink(fileName string) (linkType LinkType, err error) {
@@ -21,7 +21,7 @@ func verifyLink(fileName string) (linkType LinkType, err error) {
 		return "", fmt.Errorf("invalid file name for link")
 	}
 
-	_, err = utils.GetOperationType(fileName)
+	_, err = core.GetOperationType(fileName)
 	if err != nil {
 		return "", err
 	}

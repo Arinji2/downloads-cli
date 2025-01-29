@@ -25,7 +25,7 @@ func FoundDelete(data store.StoredData, d *Delete) (bool, error) {
 		if d.Operations.IsTesting {
 			return true, nil
 		}
-		err := os.Remove(data.Args[2])
+		err := os.Remove(data.RelativePath)
 		if err != nil {
 			d.Operations.Store.DeleteStoredData(data.ID)
 			return false, err

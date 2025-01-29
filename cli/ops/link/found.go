@@ -3,38 +3,51 @@ package link
 import (
 	"errors"
 	"fmt"
-	"path/filepath"
+	"strings"
 
 	"github.com/Arinji2/downloads-cli/logger"
+	"github.com/Arinji2/downloads-cli/ops/core"
 	"github.com/Arinji2/downloads-cli/store"
 )
 
 func FoundLink(data store.StoredData, l *Link) (bool, string, error) {
-	data.InProgress = true
-	l.Operations.Store.UpdateStoredData(data.ID, data)
+	core.UpdateProgress(data, true, l.Operations)
+	defer l.Operations.Store.DeleteStoredData(data.ID)
 
-	if l.Operations.IsTesting {
-		return true, "", nil
-	}
 	linkType := LinkType(data.Args[1])
-	path := filepath.Join(data.Args[2])
+	path := data.RelativePath
 	upload := new(Upload)
-	upload.filePath = path
+	upload.FilePath = path
+
 	switch linkType {
 	case LinkTemp:
-		upload.uploadType = LinkTemp
+		upload.UploadType = LinkTemp
 	case LinkPerm:
-		upload.uploadType = LinkPerm
+		upload.UploadType = LinkPerm
 	default:
 		return false, "", errors.New("invalid link type for switch")
 	}
-	d, err := upload.UploadData()
+
+	if l.UserHash != "" {
+		upload.UserHash = l.UserHash
+	}
+	url, err := upload.UploadData()
 	if err != nil {
 		return false, "", err
 	}
-	fmt.Println(d)
-	l.Operations.Store.DeleteStoredData(data.ID)
 	logger.GlobalLogger.AddToLog("INFO", fmt.Sprintf("Created link for file: %s", data.Args[0]))
 
-	return true, d, nil
+	lastIndex := strings.LastIndex(url, "/")
+	urlID := url[lastIndex+1:]
+	path = data.RelativePath
+	linkedFile, linked, err := core.RenameToLink(urlID, string(linkType), path)
+	if err != nil {
+		logger.GlobalLogger.AddToLog("ERROR", err.Error())
+		return false, "", err
+	}
+
+	if !linked {
+		return false, "", fmt.Errorf("failed to rename file to link")
+	}
+	return true, linkedFile, nil
 }
