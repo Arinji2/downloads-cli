@@ -34,7 +34,7 @@ export default async function Home() {
         </div>
       </div>
 
-      <PreviewClient />
+      <PreviewClient isWindowsOS={isWindowsOS} />
 
       <div className="w-full h-full flex flex-col items-center justify-start gap-6">
         <h3 className="text-white text-2xl font-medium tracking-wider">
