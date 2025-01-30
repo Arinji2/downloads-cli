@@ -2,8 +2,7 @@ version: 2
 
 
 builds:
-  - main: main.go
-    dir: ./cli
+  - dir: ./cli
     binary: 'DOS-ClI'
     goos:
       - linux
