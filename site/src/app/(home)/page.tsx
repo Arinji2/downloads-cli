@@ -1,9 +1,14 @@
 import RedirectButton from "@/components/redirect-button";
+import { headers } from "next/headers";
 import Image from "next/image";
+import PreviewClient from "./preview.client";
 import Support from "./support";
-import Terminal from "./terminal";
 
-export default function Home() {
+export default async function Home() {
+  const headersList = await headers();
+  const userAgent = (headersList.get("user-agent") || "Unknown").toLowerCase();
+  const isWindowsOS =
+    userAgent.includes("win") || userAgent.includes("windows");
   return (
     <div className="flex h-fit w-full flex-col items-center justify-start gap-12 bg-brand-background ">
       <div className="h-fit flex flex-col relative items-center justify-start gap-6">
@@ -29,7 +34,7 @@ export default function Home() {
         </div>
       </div>
 
-      <Terminal />
+      <PreviewClient />
 
       <div className="w-full h-full flex flex-col items-center justify-start gap-6">
         <h3 className="text-white text-2xl font-medium tracking-wider">
