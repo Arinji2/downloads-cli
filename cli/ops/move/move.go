@@ -3,6 +3,7 @@ package move
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -138,7 +139,8 @@ func (m *Move) RunMoveJobs() {
 					continue
 				}
 			}
-			typeOfMove := MoveType(strings.Split(data.Args[0], "-")[0])
+			fileName := filepath.Base(data.RelativePath)
+			typeOfMove := MoveType(strings.Split(fileName, "-")[0])
 			_, err := m.HandleMoveJob(data, typeOfMove)
 			if err != nil {
 				logger.GlobalLogger.AddToLog("ERROR", err.Error())
