@@ -6,7 +6,7 @@ export default function Support() {
         osColor="#1F74CF"
         osSupport="Stable, Tested"
       />
-      <SupportBox osName="Linux" osColor="#CEAF10" osSupport="Stable, Tested" />
+      <SupportBox osName="Linux" osColor="#a16207" osSupport="Stable, Tested" />
       <SupportBox
         osName="MacOS"
         osColor="#1f2937"

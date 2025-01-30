@@ -11,10 +11,11 @@ export default {
       colors: {
         brand: {
           background: "#161616",
-          primary: "#2C9E05",
+          primary: "#1D6704",
+          primaryLight: "#35C804",
           offWhite: "#C3C3C3",
-          darkWhite: "#656363",
-          darkBlue: "#448293",
+          darkWhite: "#A7A5A5",
+          darkBlue: "#73AEBF",
           darkYellow: "#D5B169",
         },
       },

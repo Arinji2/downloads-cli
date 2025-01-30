@@ -144,7 +144,7 @@ function TerminalLine({
         <span className="text-brand-darkBlue">test.png</span>{" "}
         <span className="text-brand-darkYellow">{updatedName}</span>
       </p>
-      <p className="text-brand-primary">
+      <p className="text-brand-primaryLight">
         <span className="text-brand-offWhite">~/Downloads$</span> [DOS]
         {response}
       </p>
