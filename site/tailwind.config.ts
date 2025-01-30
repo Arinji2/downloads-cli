@@ -15,10 +15,7 @@ export default {
           offWhite: "#C3C3C3",
           darkWhite: "#656363",
           darkBlue: "#448293",
-          lightBlue: "#1F74CF",
           darkYellow: "#D5B169",
-          lightYellow: "#CEAF10",
-          grey: "#929292",
         },
       },
       boxShadow: {
