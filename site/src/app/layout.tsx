@@ -21,7 +21,7 @@ export default function RootLayout({
       <body
         className={`${jetBrainsMono.className} bg-brand-background py-20 antialiased w-full h-full flex flex-col items-center justify-center`}
       >
-        <div className="w-full  flex flex-col items-center justify-start h-fit max-w-[1280px]">
+        <div className="w-full  px-3 flex flex-col items-center justify-start h-fit max-w-[1280px]">
           {children}
         </div>
       </body>
