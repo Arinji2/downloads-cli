@@ -23,7 +23,7 @@ export default {
         },
       },
       boxShadow: {
-        "terminal-shadow": "7px 7px 3px #1B1B1B",
+        brand: "6px 6px 0 #101010",
       },
     },
   },
