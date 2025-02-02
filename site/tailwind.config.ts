@@ -9,6 +9,9 @@ export default {
   theme: {
     extend: {
       colors: {
+        shades: {
+          lightBlack: "#1D1D1D",
+        },
         brand: {
           background: "#161616",
           primary: "#1D6704",
