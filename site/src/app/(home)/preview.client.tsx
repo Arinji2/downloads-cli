@@ -28,7 +28,7 @@ export default function PreviewClient({
     }
   }, [params]);
   return (
-    <div className="w-fit h-fit z-10 flex flex-col items-start justify-start gap-3 py-6 px-5 bg-[#1D1D1D] shadow-terminal-shadow">
+    <div className="w-fit h-fit z-10 flex flex-col items-start justify-start gap-3 py-6 px-5 bg-[#1D1D1D] shadow-brand">
       <div className="w-fit gap-4 h-fit flex flex-row items-center justify-start ">
         <TabItem
           name="Terminal"

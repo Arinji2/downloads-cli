@@ -1,6 +1,7 @@
 import RedirectButton from "@/components/redirect-button";
 import { headers } from "next/headers";
 import Image from "next/image";
+import Feature from "./feature";
 import PreviewClient from "./preview.client";
 import Support from "./support";
 
@@ -10,7 +11,7 @@ export default async function Home() {
   const isWindowsOS =
     userAgent.includes("win") || userAgent.includes("windows");
   return (
-    <div className="flex h-fit w-full flex-col items-center justify-start gap-12 bg-brand-background ">
+    <div className="flex h-fit w-full flex-col items-center justify-start gap-20 bg-brand-background ">
       <div className="h-fit flex flex-col relative items-center justify-start gap-6">
         <Image
           src="/big-logo.svg"
@@ -42,6 +43,8 @@ export default async function Home() {
         </h3>
         <Support />
       </div>
+
+      <Feature />
       <RedirectButton />
     </div>
   );
