@@ -8,9 +8,16 @@ export default {
   ],
   theme: {
     extend: {
+      width: {
+        "xl-align": "560px",
+      },
+      maxWidth: {
+        screen: "1280px",
+      },
       colors: {
         shades: {
           lightBlack: "#1D1D1D",
+          lighterBlack: "#1F1F1F",
         },
         brand: {
           background: "#161616",
