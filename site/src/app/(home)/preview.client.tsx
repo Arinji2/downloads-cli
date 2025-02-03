@@ -43,7 +43,7 @@ export default function PreviewClient({
           paramName="explorer"
         />
       </div>
-      <div className="md:w-[560px] max-h-[400px] w-full h-fit relative overflow-hidden">
+      <div className="md:w-xl-align max-h-[400px] w-full h-fit relative overflow-hidden">
         <TerminalClient isActive={selectedTab === "terminal"} />
         <Explorer isActive={selectedTab === "explorer"} />
       </div>

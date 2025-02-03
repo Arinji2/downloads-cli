@@ -1,17 +1,26 @@
 export default function Support() {
   return (
-    <div className="w-fit h-fit flex flex-wrap flex-row items-start justify-center gap-10 md:gap-20">
-      <SupportBox
-        osName="Windows"
-        osColor="#1F74CF"
-        osSupport="Stable, Tested"
-      />
-      <SupportBox osName="Linux" osColor="#a16207" osSupport="Stable, Tested" />
-      <SupportBox
-        osName="MacOS"
-        osColor="#1f2937"
-        osSupport="Stable, Untested"
-      />
+    <div className="w-full h-full flex flex-col items-center justify-start gap-6">
+      <h3 className="text-white text-2xl font-medium tracking-wider">
+        AVAILABLE ON
+      </h3>
+      <div className="w-fit h-fit flex flex-wrap flex-row items-start justify-center gap-10 md:gap-20">
+        <SupportBox
+          osName="Windows"
+          osColor="#1F74CF"
+          osSupport="Stable, Tested"
+        />
+        <SupportBox
+          osName="Linux"
+          osColor="#a16207"
+          osSupport="Stable, Tested"
+        />
+        <SupportBox
+          osName="MacOS"
+          osColor="#1f2937"
+          osSupport="Stable, Untested"
+        />
+      </div>
     </div>
   );
 }
