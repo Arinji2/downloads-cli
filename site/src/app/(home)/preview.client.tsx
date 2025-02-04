@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/button";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "../../../utils/cn";
@@ -64,20 +65,15 @@ function TabItem({
   const router = useRouter();
   const pathname = usePathname();
   return (
-    <button
+    <Button
       onClick={() => {
         params.set("selectedTab", paramName);
         router.replace(`${pathname}?${params.toString()}`);
       }}
-      className={cn(
-        "transition-all ease-in-out duration-300 text-white border-2 border-white/50 rounded-sm p-2 text-sm font-medium tracking-wider",
-        {
-          "bg-brand-primary text-white": isActive,
-        },
-      )}
+      variant={isActive ? "default" : "secondary"}
     >
       {name}
-    </button>
+    </Button>
   );
 }
 function Explorer({ isActive }: { isActive: boolean }) {
