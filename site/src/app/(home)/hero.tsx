@@ -1,3 +1,4 @@
+import { Button } from "@/components/button";
 import { headers } from "next/headers";
 import Image from "next/image";
 import PreviewClient from "./preview.client";
@@ -23,12 +24,8 @@ export default async function Hero() {
           The download tool made for <br /> the power user
         </h2>
         <div className="w-fit h-fit flex flex-row items-center z-10 justify-center gap-4">
-          <button className="hover:text-brand-primary hover:bg-brand-background transition-colors ease-in-out duration-300 bg-brand-primary text-white px-5 py-2 font-bold border-2 border-brand-primary ">
-            DOWNLOAD
-          </button>
-          <button className="hover:text-brand-background hover:bg-brand-primary transition-colors ease-in-out duration-300 bg-brand-background text-white px-5 py-2 font-bold border-2 border-brand-primary ">
-            FEATURES
-          </button>
+          <Button>DOWNLOAD</Button>
+          <Button variant="secondary">FEATURES</Button>
         </div>
       </div>
 
