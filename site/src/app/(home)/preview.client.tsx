@@ -68,7 +68,9 @@ function TabItem({
     <Button
       onClick={() => {
         params.set("selectedTab", paramName);
-        router.replace(`${pathname}?${params.toString()}`);
+        router.replace(`${pathname}?${params.toString()}`, {
+          scroll: false,
+        });
       }}
       variant={isActive ? "default" : "secondary"}
     >
