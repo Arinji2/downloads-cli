@@ -1,9 +1,9 @@
 "use client";
 import { Button } from "@/components/button";
 import { Item } from "@/components/example-item.client";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { ExampleTabItem } from "@/components/tab-items";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { cn } from "../../../utils/cn";
 
 export default function ExampleClient() {
   const searchParams = useSearchParams();
@@ -40,21 +40,21 @@ export default function ExampleClient() {
           <Button variant={"secondary"}>DOCUMENTATION</Button>
         </div>
         <div className="w-fit h-fit flex flex-row items-center justify-start gap-4">
-          <TabItem
+          <ExampleTabItem
             name="MOVE"
             isActive={selectedDocs === "move"}
             params={params}
             paramName="move"
           />
 
-          <TabItem
+          <ExampleTabItem
             name="DELETE"
             isActive={selectedDocs === "delete"}
             params={params}
             paramName="delete"
           />
 
-          <TabItem
+          <ExampleTabItem
             name="LINK"
             isActive={selectedDocs === "link"}
             params={params}
@@ -85,38 +85,5 @@ export default function ExampleClient() {
         </div>
       </div>
     </div>
-  );
-}
-function TabItem({
-  name,
-  isActive,
-  params,
-  paramName,
-}: {
-  name: string;
-  isActive: boolean;
-  params: URLSearchParams;
-  paramName: string;
-}) {
-  const router = useRouter();
-  const pathname = usePathname();
-  return (
-    <button
-      onClick={() => {
-        params.set("selectedDocs", paramName);
-        console.log(params.toString(), paramName);
-        router.replace(`${pathname}?${params.toString()}`, {
-          scroll: false,
-        });
-      }}
-      className={cn(
-        "w-fit h-fit py-2 px-6 bg-[#22391A] shadow-brand text-white text-sm font-bold",
-        {
-          "bg-brand-background": !isActive,
-        },
-      )}
-    >
-      {name}
-    </button>
   );
 }

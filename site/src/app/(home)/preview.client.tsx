@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/button";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { ExplorerTabItem } from "@/components/tab-items";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "../../../utils/cn";
 
@@ -31,7 +31,7 @@ export default function PreviewClient({
   return (
     <div className="w-fit h-fit z-10 flex flex-col items-start justify-start gap-3 py-6 px-5 bg-[#1D1D1D] shadow-brand">
       <div className="w-fit gap-4 h-fit flex flex-row items-center justify-start ">
-        <TabItem
+        <ExplorerTabItem
           name="Terminal"
           isActive={selectedTab === "terminal"}
           params={params}
@@ -49,33 +49,6 @@ export default function PreviewClient({
         <Explorer isActive={selectedTab === "explorer"} />
       </div>
     </div>
-  );
-}
-function TabItem({
-  name,
-  isActive,
-  params,
-  paramName,
-}: {
-  name: string;
-  isActive: boolean;
-  params: URLSearchParams;
-  paramName: string;
-}) {
-  const router = useRouter();
-  const pathname = usePathname();
-  return (
-    <Button
-      onClick={() => {
-        params.set("selectedTab", paramName);
-        router.replace(`${pathname}?${params.toString()}`, {
-          scroll: false,
-        });
-      }}
-      variant={isActive ? "default" : "secondary"}
-    >
-      {name}
-    </Button>
   );
 }
 function Explorer({ isActive }: { isActive: boolean }) {
