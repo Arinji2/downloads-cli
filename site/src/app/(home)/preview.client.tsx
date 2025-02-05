@@ -37,7 +37,7 @@ export default function PreviewClient({
           params={params}
           paramName="terminal"
         />
-        <TabItem
+        <ExplorerTabItem
           name="File Explorer"
           isActive={selectedTab === "explorer"}
           params={params}
