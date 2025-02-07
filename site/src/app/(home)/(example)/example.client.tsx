@@ -12,8 +12,8 @@ export default function Example() {
   const params = useMemo(() => {
     return new URLSearchParams(searchParams);
   }, [searchParams]);
-  const [selectedDocs, setSelectedDocs] = useState<"move" | "delete" | "link">(
-    "move",
+  const [selectedDocs, setSelectedDocs] = useState<"MOVE" | "DELETE" | "LINK">(
+    "MOVE",
   );
   const [api, setApi] = useState<CarouselApi>();
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function Example() {
     ConventionsData.forEach((data, index) => {
       if (data.name === tab) {
         api.scrollTo(index);
-        setSelectedDocs(tab as "move" | "delete" | "link");
+        setSelectedDocs(tab as "MOVE" | "DELETE" | "LINK");
       }
     });
   }, [params, api]);
