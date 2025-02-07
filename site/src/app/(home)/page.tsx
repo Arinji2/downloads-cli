@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import Example from "./(example)/example.client";
 import Demo from "./demo.client";
 import Feature from "./feature";
+import Footer from "./footer";
 import Hero from "./hero";
 import Support from "./support";
 
@@ -16,6 +17,7 @@ export default async function Home() {
         <Example />
         <Demo />
       </Suspense>
+      <Footer />
       <RedirectButton />
     </div>
   );
