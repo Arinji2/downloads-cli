@@ -1,6 +1,7 @@
 import RedirectButton from "@/components/redirect-button";
 import { Suspense } from "react";
 import Example from "./(example)/example.client";
+import Demo from "./demo.client";
 import Feature from "./feature";
 import Hero from "./hero";
 import Support from "./support";
@@ -13,6 +14,7 @@ export default async function Home() {
       <Feature />
       <Suspense fallback={<></>}>
         <Example />
+        <Demo />
       </Suspense>
       <RedirectButton />
     </div>

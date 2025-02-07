@@ -4,25 +4,27 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "../../utils/cn";
 import { Button } from "./button";
 
-export function ExampleTabItem({
+export function SelectTabItem({
   name,
   isActive,
   params,
   paramName,
+  paramValue,
   scrollRef,
 }: {
   name: string;
   isActive: boolean;
   params: URLSearchParams;
   paramName: string;
-  scrollRef: React.RefObject<HTMLDivElement | null>;
+  paramValue: string;
+  scrollRef?: React.RefObject<HTMLDivElement | null>;
 }) {
   const router = useRouter();
   const pathname = usePathname();
   return (
     <button
       onClick={() => {
-        params.set("selectedDocs", paramName);
+        params.set(paramName, paramValue);
         console.log(params.toString(), paramName);
         router.replace(`${pathname}?${params.toString()}`, {
           scroll: false,

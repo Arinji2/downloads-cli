@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/button";
 import { CarouselApi } from "@/components/carousel";
-import { ExampleTabItem } from "@/components/tab-items";
+import { SelectTabItem } from "@/components/tab-items";
 import { ConventionsData } from "@/example";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -49,12 +49,13 @@ export default function Example() {
         <div className="w-full sticky top-0 h-fit py-2 flex bg-shades-lighterBlack z-10 flex-row items-center justify-start gap-4">
           {ConventionsData.map((data, index) => {
             return (
-              <ExampleTabItem
+              <SelectTabItem
                 key={index}
                 name={data.name}
                 isActive={selectedDocs === data.name}
                 params={params}
-                paramName={data.name.toLowerCase()}
+                paramName={"selectedDocs"}
+                paramValue={data.name.toLowerCase()}
                 scrollRef={containerRef}
               />
             );

@@ -1,3 +1,19 @@
+export type ConventionData = {
+  name: string;
+  description: string;
+  items: ConventionItem[];
+};
+
+export type ConventionItem = {
+  name: string;
+  args: string[];
+  infoLink: string;
+  description: string;
+  demo: {
+    terminal: string;
+    explorer: string;
+  };
+};
 export const ConventionsData = [
   {
     name: "MOVE",
@@ -97,4 +113,4 @@ export const ConventionsData = [
       },
     ],
   },
-];
+] as ConventionData[];
