@@ -1,5 +1,5 @@
 import RedirectButton from "@/components/redirect-button";
-import Example from "./example.client";
+import Example from "./(example)/example.client";
 import Feature from "./feature";
 import Hero from "./hero";
 import Support from "./support";

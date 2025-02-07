@@ -9,7 +9,7 @@ export default function Feature() {
       <h3 className="text-3xl font-bold tracking-tight text-white">
         Key Features
       </h3>
-      <div className="grid xl:grid-cols-2 grid-cols-1 gap-12 w-fit ">
+      <div className="grid md:w-align xl:grid-cols-2 grid-cols-1 gap-12 w-fit ">
         <FeatureItem
           icon={
             <FileIcon

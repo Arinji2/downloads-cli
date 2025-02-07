@@ -9,7 +9,7 @@ export default {
   theme: {
     extend: {
       width: {
-        "xl-align": "560px",
+        align: "850px",
       },
       maxWidth: {
         screen: "1280px",

@@ -1,24 +1,24 @@
 "use client";
 
+import { cn } from "@/../utils/cn";
 import { CheckIcon } from "@/icons/check";
 import { CopyIcon } from "@/icons/copy";
 import { InfoBoxIcon } from "@/icons/info";
 import Link from "next/link";
 import { useState } from "react";
-import { cn } from "../../utils/cn";
 
 export function Item({
   index,
   name,
-  children,
   args,
+  description,
   infoLink,
 }: {
   index: number;
   name: string;
   args: string[];
+  description: string;
   infoLink: string;
-  children: React.ReactNode;
 }) {
   const [showCheck, setShowCheck] = useState(false);
   return (
@@ -26,8 +26,9 @@ export function Item({
       <h4 className="text-lg font-bold tracking-tighter text-white">
         <span className="text-brand-primaryLight">{index})</span> {name}
       </h4>
-      {children}
-      <div className="relative mt-10 flex h-fit w-fit flex-row items-center justify-start gap-2 bg-[#323232] px-6 py-2 shadow-brand">
+
+      <p dangerouslySetInnerHTML={{ __html: description }} />
+      <div className="relative mt-10 flex h-fit w-fit flex-row items-center justify-start  bg-[#323232] px-6 py-2 shadow-brand">
         <div className="absolute -top-full right-0 flex h-10 w-fit flex-row items-center justify-center gap-2 bg-[#323232] px-2">
           <Link href={infoLink}>
             <InfoBoxIcon
@@ -71,12 +72,12 @@ export function Item({
         {args.map((item, index) => {
           return (
             <div
-              className="flex h-fit w-fit flex-row items-center justify-center gap-4"
+              className="flex h-fit w-fit flex-row items-center justify-center pl-2 gap-2"
               key={index}
             >
-              <p className="text-sm text-brand-offWhite">{item}</p>
+              <p className="text-xs md:text-sm text-brand-offWhite">{item}</p>
               {index !== args.length - 1 && (
-                <div className="h-[2px] w-5 bg-brand-primaryLight"></div>
+                <div className="h-[2px] w-3 md:w-5 bg-brand-primaryLight"></div>
               )}
             </div>
           );

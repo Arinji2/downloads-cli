@@ -9,11 +9,13 @@ export function ExampleTabItem({
   isActive,
   params,
   paramName,
+  scrollRef,
 }: {
   name: string;
   isActive: boolean;
   params: URLSearchParams;
   paramName: string;
+  scrollRef: React.RefObject<HTMLDivElement | null>;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -25,6 +27,8 @@ export function ExampleTabItem({
         router.replace(`${pathname}?${params.toString()}`, {
           scroll: false,
         });
+
+        scrollRef?.current?.scrollIntoView({ behavior: "smooth" });
       }}
       className={cn(
         "w-fit h-fit py-2 px-6 bg-[#22391A] shadow-brand text-white text-sm font-bold",
