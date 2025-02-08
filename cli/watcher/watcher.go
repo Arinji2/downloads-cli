@@ -3,6 +3,7 @@ package watcher
 import (
 	"fmt"
 	"log"
+	"os"
 	"regexp"
 	"strings"
 
@@ -10,6 +11,17 @@ import (
 	"github.com/Arinji2/downloads-cli/options"
 	"github.com/helshabini/fsbroker"
 )
+
+func VerifyFile(path string) bool {
+	fileRegex := `^[^-]+?-[^-]+?-[^-]+?\.[^.]+$`
+	parts := strings.Split(path, string(os.PathSeparator))
+	c, err := regexp.Compile(fileRegex)
+	if err != nil {
+		fmt.Println(err)
+	}
+	match := c.MatchString(parts[len(parts)-1])
+	return match
+}
 
 func StartWatcher(w *WatcherLog, opts *options.Options) {
 	config := fsbroker.DefaultFSConfig()
@@ -30,14 +42,8 @@ func StartWatcher(w *WatcherLog, opts *options.Options) {
 	for {
 		select {
 		case event := <-broker.Next():
-			fileRegex := `^[^-]+?-[^-]+?-[^-]+?\.[^.]+$`
-			parts := strings.Split(event.Path, "/")
-			c, err := regexp.Compile(fileRegex)
-			if err != nil {
-				fmt.Println(err)
-			}
-			match := c.MatchString(parts[len(parts)-1])
-			if !match {
+			verified := VerifyFile(event.Path)
+			if !verified {
 				continue
 			}
 			if event.Type.String() == "Create" {
