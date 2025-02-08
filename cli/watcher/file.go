@@ -2,7 +2,7 @@ package watcher
 
 import (
 	"fmt"
-	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -27,9 +27,9 @@ type WatcherLog struct {
 }
 
 func (w *WatcherLog) FileCreated(path string) bool {
-	fileParts := strings.Split(path, string(os.PathSeparator))
-	fileName := fileParts[len(fileParts)-1]
+	fileName := filepath.Base(path)
 	operationType, err := core.GetOperationType(fileName)
+	logger.GlobalLogger.AddToLog("INFO", fmt.Sprintf("operation type: %s", operationType))
 	if err != nil {
 		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		return false
