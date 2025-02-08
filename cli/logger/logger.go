@@ -3,13 +3,12 @@ package logger
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"runtime"
-	"strings"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/gen2brain/beeep"
 )
 
 type Logger struct {
@@ -131,50 +130,10 @@ func (l *Logger) Notify(msg string) error {
 
 // Notify sends a notification using the appropriate platform-specific method
 func (n *notifier) Notify(title, message string) error {
-	switch runtime.GOOS {
-	case "linux":
-		// Linux uses notify-send command
-		cmd := exec.Command("notify-send", "-i", "preferences-system", title, message)
-		return cmd.Run()
-
-	case "darwin":
-		// macOS uses AppleScript
-		script := fmt.Sprintf(`display notification "%s" with title "%s"`, message, title)
-		cmd := exec.Command("osascript", "-e", script)
-		return cmd.Run()
-
-	case "windows":
-		// Escape single quotes in the message and title
-		message = strings.ReplaceAll(message, "'", "''")
-		title = strings.ReplaceAll(title, "'", "''")
-
-		// Try Windows 10+ toast notification first
-		script := fmt.Sprintf(`
-[Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] > $null
-$template = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType]::ToastText02)
-
-$toastXml = [xml] $template.GetXml()
-$toastXml.GetElementsByTagName("text")[0].AppendChild($toastXml.CreateTextNode('%s')) > $null
-$toastXml.GetElementsByTagName("text")[1].AppendChild($toastXml.CreateTextNode('%s')) > $null
-
-$toast = [Windows.UI.Notifications.ToastNotification]::new($toastXml)
-$notifier = [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('%s')
-$notifier.Show($toast)`, title, message, title)
-
-		cmd := exec.Command("powershell", "-Command", script)
-		err := cmd.Run()
-		if err == nil {
-			return nil
-		}
-
-		// Fallback to WPF MessageBox if toast notification fails
-		script = fmt.Sprintf(`
-Add-Type -AssemblyName PresentationFramework
-[System.Windows.MessageBox]::Show('%s', '%s')`, message, title)
-
-		cmd = exec.Command("powershell", "-Command", script)
-		return cmd.Run()
-	default:
-		return fmt.Errorf("unsupported platform: %s", runtime.GOOS)
+	err := beeep.Notify(title, message, "")
+	if err != nil {
+		err = fmt.Errorf("error sending notification: %v", err)
+		fmt.Println(err)
 	}
+	return nil
 }
