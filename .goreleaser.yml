@@ -1,8 +1,9 @@
 version: 2
 
+
 builds:
   - dir: ./cli
-    binary: 'dos'
+    binary: 'DOS-ClI'
     goos:
       - linux
       - windows
@@ -18,13 +19,5 @@ builds:
       - -X main.date={{.Date}}
     env:
       - CGO_ENABLED=0
-    overrides:  
-      - goos: windows
-        goarch: amd64
-        ldflags:
-          - -s 
-          - -w 
-          - -X main.version={{.Version}} 
-          - -X main.commit={{.Commit}} 
-          - -X main.date={{.Date}}
-          - "-H=console"  # Force terminal for Windows
+
+
