@@ -39,6 +39,10 @@ func startup(downloadsFolder string, s *store.Store, w *watcher.WatcherLog) {
 		}
 
 		if !slices.Contains(fileNames, relPath) {
+			verified := watcher.VerifyFile(relPath)
+			if !verified {
+				return nil
+			}
 			added := w.FileCreated(relPath)
 			if added {
 				count++
