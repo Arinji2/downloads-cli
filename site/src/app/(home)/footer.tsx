@@ -4,12 +4,12 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <div className="w-full relative md:overflow-visible overflow-hidden bg-gradient-to-tr from-brand-background to-brand-background/60 flex flex-col items-center justify-center gap-12 md:h-[30svh] h-[50svh] py-10 md:py-2 text-center">
+    <div className="w-full relative md:max-h-[350px] overflow-hidden bg-gradient-to-tr from-brand-background to-brand-background/60 flex flex-col items-center justify-center gap-12 md:h-[30svh] h-[50svh] py-10 md:py-2 text-center">
       <Image
         src="/big-logo.svg"
         alt="logo"
         fill
-        className="object-contain  scale-125 "
+        className="object-contain  md:scale-100 scale-125 "
       />
       <div className="w-fit h-fit flex flex-col z-10 items-center justify-center gap-4">
         <h6 className="text-white font-bold text-3xl">
