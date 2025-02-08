@@ -3,24 +3,30 @@ package watcher
 import (
 	"fmt"
 	"log"
-	"os"
+	"path/filepath"
 	"regexp"
-	"strings"
 
 	"github.com/Arinji2/downloads-cli/logger"
+	"github.com/Arinji2/downloads-cli/ops/core"
 	"github.com/Arinji2/downloads-cli/options"
 	"github.com/helshabini/fsbroker"
 )
 
 func VerifyFile(path string) bool {
 	fileRegex := `^[^-]+?-[^-]+?-[^-]+?\.[^.]+$`
-	parts := strings.Split(path, string(os.PathSeparator))
+	fileName := filepath.Base(path)
 	c, err := regexp.Compile(fileRegex)
 	if err != nil {
 		fmt.Println(err)
 	}
-	match := c.MatchString(parts[len(parts)-1])
-	return match
+	match := c.MatchString(fileName)
+	if !match {
+		return false
+	}
+
+	_, err = core.GetOperationType(fileName)
+	fmt.Println(fileName, err == nil)
+	return err == nil
 }
 
 func StartWatcher(w *WatcherLog, opts *options.Options) {
