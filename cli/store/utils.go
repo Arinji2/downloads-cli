@@ -16,6 +16,15 @@ func readAndParseStoredData(s *Store) ([]StoredData, error) {
 
 	data, err := os.ReadFile(s.storageFilename)
 	if err != nil {
+		if os.IsNotExist(err) {
+			logger.GlobalLogger.AddToLog("INFO", "storage file does not exist, creating new one")
+			_, err := os.Create(s.storageFilename)
+			if err != nil {
+				logger.GlobalLogger.AddToLog("ERROR", err.Error())
+				return nil, err
+			}
+			return readAndParseStoredData(s)
+		}
 		logger.GlobalLogger.AddToLog("ERROR", err.Error())
 		return nil, err
 	}
