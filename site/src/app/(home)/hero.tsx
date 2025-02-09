@@ -1,13 +1,8 @@
 import { Button } from "@/components/button";
-import { headers } from "next/headers";
 import Image from "next/image";
 import PreviewClient from "./preview.client";
 
-export default async function Hero() {
-  const headersList = await headers();
-  const userAgent = (headersList.get("user-agent") || "Unknown").toLowerCase();
-  const isWindowsOS =
-    userAgent.includes("win") || userAgent.includes("windows");
+export default function Hero({ isWindowsOS }: { isWindowsOS: boolean }) {
   return (
     <div className="flex h-fit w-full flex-col items-center justify-start gap-20 bg-brand-background ">
       <div className="h-fit flex flex-col relative items-center justify-start gap-6">
