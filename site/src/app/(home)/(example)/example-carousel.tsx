@@ -42,7 +42,6 @@ export function ExampleCarousel({ api, scrollRef }: ExampleCarouselProps) {
                       name={item.name}
                       args={item.args}
                       description={item.description}
-                      infoLink={item.infoLink}
                     />
                   );
                 })}

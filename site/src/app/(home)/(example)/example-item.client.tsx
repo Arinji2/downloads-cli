@@ -3,8 +3,6 @@
 import { cn } from "@/../utils/cn";
 import { CheckIcon } from "@/icons/check";
 import { CopyIcon } from "@/icons/copy";
-import { InfoBoxIcon } from "@/icons/info";
-import Link from "next/link";
 import { useState } from "react";
 
 export function Item({
@@ -12,13 +10,11 @@ export function Item({
   name,
   args,
   description,
-  infoLink,
 }: {
   index: number;
   name: string;
   args: string[];
   description: string;
-  infoLink: string;
 }) {
   const [showCheck, setShowCheck] = useState(false);
   return (
@@ -30,13 +26,6 @@ export function Item({
       <p dangerouslySetInnerHTML={{ __html: description }} />
       <div className="relative mt-10 flex h-fit w-fit flex-row items-center justify-start  bg-[#323232] px-6 py-2 shadow-brand">
         <div className="absolute -top-full right-0 flex h-10 w-fit flex-row items-center justify-center gap-2 bg-[#323232] px-2">
-          <Link href={infoLink}>
-            <InfoBoxIcon
-              strokeWidth={0.5}
-              className="size-5 text-brand-darkYellow"
-            />
-          </Link>
-
           <button
             onClick={() => {
               navigator.clipboard.writeText(args.join("-"));

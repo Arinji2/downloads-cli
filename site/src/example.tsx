@@ -7,7 +7,6 @@ export type ConventionData = {
 export type ConventionItem = {
   name: string;
   args: string[];
-  infoLink: string;
   description: string;
   demo: {
     terminal: string;
@@ -22,7 +21,6 @@ export const ConventionsData = [
       {
         name: "Move Default",
         args: ["md", "pictures", "test.png"],
-        infoLink: "/move?selected=default",
         description: `<span class="text-sm text-brand-offWhite">
           Move a file, using a location preset in your 
           <span class="text-brand-primaryLight">options file</span>
@@ -35,7 +33,6 @@ export const ConventionsData = [
       {
         name: "Move Custom",
         args: ["mc", "~#pictures#test", "test.png"],
-        infoLink: "/move?selected=custom",
         description: `<span class="text-sm text-brand-offWhite"> 
           Move a file, using a custom location 
           <span class="text-brand-primaryLight">
@@ -50,7 +47,6 @@ export const ConventionsData = [
       {
         name: "Move Custom Default",
         args: ["mcd", "pictures#test", "test.png"],
-        infoLink: "/move?selected=customdefault",
         description: `<span class="text-sm text-brand-offWhite">
           Move a file, using a custom location 
           <span class="text-brand-primaryLight">
@@ -72,7 +68,6 @@ export const ConventionsData = [
       {
         name: "Link Temporary",
         args: ["l", "t", "test.png"],
-        infoLink: "/link?selected=temporary",
         description: `<span class="text-sm text-brand-offWhite">
           Make a temporary CDN link for a file, up to 150MB which will expire in an hour.
         </span>`,
@@ -84,7 +79,6 @@ export const ConventionsData = [
       {
         name: "Link Permanent",
         args: ["l", "p", "test.png"],
-        infoLink: "/link?selected=permanent",
         description: `<span class="text-sm text-brand-offWhite">
           Make a permanent CDN link for a file, up to 100MB which will never expire.
         </span>`,
@@ -102,7 +96,6 @@ export const ConventionsData = [
       {
         name: "Delete",
         args: ["d", "2s", "test.png"],
-        infoLink: "/delete",
         description: `<span class="text-sm text-brand-offWhite">
           Make a temporary file, and delete it after 2 seconds.
         </span>`,
