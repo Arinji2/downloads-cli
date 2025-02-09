@@ -15,11 +15,6 @@ export default function Support() {
           osColor="#a16207"
           osSupport="Stable, Tested"
         />
-        <SupportBox
-          osName="MacOS"
-          osColor="#1f2937"
-          osSupport="Stable, Untested"
-        />
       </div>
     </div>
   );
