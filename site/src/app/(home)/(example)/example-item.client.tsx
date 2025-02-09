@@ -34,6 +34,7 @@ export function Item({
                 setShowCheck(false);
               }, 1000);
             }}
+            aria-label={`Copy Example Filename For ${name}`}
             className="relative flex flex-col items-center justify-center size-5 overflow-hidden"
           >
             <CheckIcon
