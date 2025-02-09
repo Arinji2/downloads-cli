@@ -15,6 +15,18 @@ func InputDir(prompt string) string {
 		fmt.Scanln(&dir)
 		if err := checkDirPerms(dir); err != nil {
 			PrintMessage(err.Error(), "error")
+			wd, err := os.Getwd()
+			if err != nil {
+				PrintMessage(err.Error(), "error")
+				continue
+			}
+			PrintMessage(fmt.Sprintf("Current Working Directory: %s", wd), "info")
+			home, err := os.UserHomeDir()
+			if err != nil {
+				PrintMessage(err.Error(), "error")
+				continue
+			}
+			PrintMessage(fmt.Sprintf("Home Directory: %s", home), "info")
 			continue
 		}
 		files, err := os.ReadDir(dir)
