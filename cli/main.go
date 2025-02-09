@@ -9,8 +9,8 @@ import (
 	"github.com/Arinji2/downloads-cli/ops/link"
 	"github.com/Arinji2/downloads-cli/ops/move"
 	"github.com/Arinji2/downloads-cli/options"
+	"github.com/Arinji2/downloads-cli/process"
 	"github.com/Arinji2/downloads-cli/store"
-	"github.com/Arinji2/downloads-cli/store/process"
 	"github.com/Arinji2/downloads-cli/watcher"
 	_ "github.com/joho/godotenv/autoload"
 )
