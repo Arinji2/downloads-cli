@@ -34,7 +34,10 @@ export default function Example() {
   }, [params, api]);
   const containerRef = useRef<HTMLDivElement>(null);
   return (
-    <div className="relative h-fit flex fl -mx-[calc(50vw-50%)] w-screen bg-shades-lighterBlack py-10">
+    <div
+      id="examples"
+      className="relative h-fit flex fl -mx-[calc(50vw-50%)] w-screen bg-shades-lighterBlack py-10"
+    >
       <div className="gap-14 max-w-[1280px] w-full md:w-align mx-auto px-3 flex flex-col items-start justify-start">
         <div className="items-start justify-start gap-7 md:w-align w-full h-fit flex flex-col">
           <h3 className="text-3xl font-bold tracking-tight text-white">

@@ -1,5 +1,6 @@
 import { Button } from "@/components/button";
 import Image from "next/image";
+import Link from "next/link";
 import PreviewClient from "./preview.client";
 
 export default function Hero({ isWindowsOS }: { isWindowsOS: boolean }) {
@@ -19,8 +20,17 @@ export default function Hero({ isWindowsOS }: { isWindowsOS: boolean }) {
           The download tool made for <br /> the power user
         </h2>
         <div className="w-fit h-fit flex flex-row items-center z-10 justify-center gap-4">
-          <Button>DOWNLOAD</Button>
-          <Button variant="secondary">FEATURES</Button>
+          <Button asChild>
+            <Link
+              href="https://github.com/Arinji2/downloads-cli/releases/"
+              target="_blank"
+            >
+              Download
+            </Link>
+          </Button>
+          <Button variant="secondary" asChild>
+            <Link href="#examples">Examples</Link>
+          </Button>
         </div>
       </div>
 
