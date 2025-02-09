@@ -50,6 +50,8 @@ func main() {
 		os.Exit(1)
 	}
 
+	watcher.StartStatusWatchr()
+
 	select {}
 
 	// c := make(chan os.Signal, 1)

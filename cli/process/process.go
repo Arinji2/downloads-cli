@@ -35,6 +35,14 @@ func PrerunProcessCheck() bool {
 	return false
 }
 
+func EndProcessCheck() bool {
+	statusFileExists := checkForStatusFile()
+	if statusFileExists {
+		os.Remove("status")
+	}
+	return true
+}
+
 // Adds the process ID to status file
 func PostrunProcessCheck() bool {
 	statusFileExists := checkForStatusFile()
