@@ -12,9 +12,9 @@ export default function Footer() {
         className="object-contain  md:scale-100 scale-125 "
       />
       <div className="w-fit h-fit flex flex-col z-10 items-center justify-center gap-4">
-        <h6 className="text-white font-bold text-3xl">
+        <p className="text-white font-bold text-3xl">
           What are you waiting for?
-        </h6>
+        </p>
         <p className="text-lg md:text-xl text-brand-offWhite">
           Download DOS and revolutionize your downloads experience
         </p>
