@@ -1,10 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/Arinji2/downloads-cli/logger"
 	"github.com/Arinji2/downloads-cli/ops"
@@ -13,6 +10,7 @@ import (
 	"github.com/Arinji2/downloads-cli/ops/move"
 	"github.com/Arinji2/downloads-cli/options"
 	"github.com/Arinji2/downloads-cli/store"
+	"github.com/Arinji2/downloads-cli/store/process"
 	"github.com/Arinji2/downloads-cli/watcher"
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -31,18 +29,39 @@ func main() {
 	}
 	logger.GlobalizeLogger(log)
 
+	exists := process.PrerunProcessCheck()
+	if exists {
+		log.Notify("Downloads CLI is already running")
+		log.AddToLog("INFO", "Downloads CLI is already running")
+		os.Exit(0)
+	}
+
 	setupOperations(s, &opts)
 
 	log.Notify("DOWNLOADS CLI STARTED SUCCESSFULLY")
 	log.AddToLog("INFO", "DOWNLOADS CLI STARTED SUCCESSFULLY")
 
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+	addedProcess := process.PostrunProcessCheck()
+	if addedProcess {
+		log.AddToLog("INFO", "Successfully added process to status file")
+	} else {
+		log.AddToLog("ERROR", "Failed to add process to status file")
+		log.Notify("Failed to add process to status file")
+		os.Exit(1)
+	}
 
-	<-stop
+	select {}
 
-	fmt.Println("Shutting down gracefully...")
-	shutdown(s)
+	// c := make(chan os.Signal, 1)
+	// signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	// <-c
+
+	// stop := make(chan os.Signal, 1)
+	// signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+	// <-stop
+	//
+	// fmt.Println("Shutting down gracefully...")
+	// shutdown(s)
 }
 
 func setupOperations(s *store.Store, o *options.Options) {
