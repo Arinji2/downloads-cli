@@ -72,6 +72,5 @@ func setupOperations(s *store.Store, o *options.Options) {
 	go moveJob.RunMoveJobs()
 	go linkJob.RunLinkJobs()
 
-	fmt.Println("Running Startup")
 	startup(o.DownloadsFolder, s, &w)
 }

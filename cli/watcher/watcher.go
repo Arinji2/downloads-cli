@@ -25,7 +25,6 @@ func VerifyFile(path string) bool {
 	}
 
 	_, err = core.GetOperationType(fileName)
-	fmt.Println(fileName, err == nil)
 	return err == nil
 }
 
