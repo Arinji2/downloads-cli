@@ -74,8 +74,16 @@ func StartWatcher(w *WatcherLog, opts *options.Options) {
 	}
 }
 
-func StartStatusWatchr() chan bool {
-	exitChan := make(chan bool)
+type CLIWatcherChannels struct {
+	Exit          chan bool
+	UpdateOptions chan bool
+}
+
+func StartCLIWatcher() CLIWatcherChannels {
+	channels := CLIWatcherChannels{
+		Exit:          make(chan bool),
+		UpdateOptions: make(chan bool),
+	}
 	currentDir, err := os.Getwd()
 	if err != nil {
 		panic(err)
@@ -101,19 +109,25 @@ func StartStatusWatchr() chan bool {
 			select {
 			case event := <-broker.Next():
 				fileName := filepath.Base(event.Path)
-
-				if fileName != "status" {
+				if fileName != "status" && fileName != "options.json" {
 					continue
 				}
 
 				if event.Type.String() == "Remove" {
-					removed := process.EndProcessCheck()
-					if !removed {
-						continue
+					if fileName == "status" {
+						removed := process.EndProcessCheck()
+						if !removed {
+							continue
+						}
+						channels.Exit <- true
+						broker.Stop()
+						return
 					}
-					exitChan <- true
-					broker.Stop()
-					return
+				}
+				if event.Type.String() == "Rename" {
+					if fileName == "options.json" {
+						channels.UpdateOptions <- true
+					}
 				}
 			case error := <-broker.Error():
 				err = fmt.Errorf("error in status watcher: %v", error)
@@ -124,5 +138,5 @@ func StartStatusWatchr() chan bool {
 		}
 	}()
 
-	return exitChan
+	return channels
 }

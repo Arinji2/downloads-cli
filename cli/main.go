@@ -18,10 +18,6 @@ import (
 
 func main() {
 	opts := options.GetOptions()
-	_, err := os.ReadDir(opts.DownloadsFolder)
-	if err != nil {
-		panic(err)
-	}
 	s := store.InitStore(false)
 
 	log, err := logger.NewLogger(opts.LogFile, 1024*1024, "DOWNLOADS CLI")
@@ -51,8 +47,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	exitChan := watcher.StartStatusWatchr()
-	if <-exitChan {
+	channels := watcher.StartCLIWatcher()
+	go func() {
+		for range channels.UpdateOptions {
+			fmt.Println("Received update signal")
+
+			opts := options.GetOptions()
+			setupOperations(s, &opts)
+		}
+	}()
+	if <-channels.Exit {
 		fmt.Println("Received exit signal, stopping program...")
 		shutdown(s)
 		os.Exit(0)
