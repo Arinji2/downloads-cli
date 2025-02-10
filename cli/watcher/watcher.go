@@ -74,7 +74,8 @@ func StartWatcher(w *WatcherLog, opts *options.Options) {
 	}
 }
 
-func StartStatusWatchr() {
+func StartStatusWatchr() chan bool {
+	exitChan := make(chan bool)
 	currentDir, err := os.Getwd()
 	if err != nil {
 		panic(err)
@@ -86,7 +87,7 @@ func StartStatusWatchr() {
 		logger.GlobalLogger.AddToLog("FATAL", fmt.Errorf("error creating FS Broker For Status: %v", err).Error())
 		log.Fatalf("error creating FS Broker: %v", err)
 	}
-	defer broker.Stop()
+	// Remove the defer here
 
 	if err := broker.AddWatch(currentDir); err != nil {
 		logger.GlobalLogger.AddToLog("FATAL", fmt.Errorf("error adding watch to current directory for status: %v", err).Error())
@@ -95,27 +96,33 @@ func StartStatusWatchr() {
 
 	broker.Start()
 
-	for {
-		select {
-		case event := <-broker.Next():
-			fileName := filepath.Base(event.Path)
-			if fileName != "status" {
-				continue
-			}
-			if event.Type.String() == "Remove" {
+	go func() {
+		for {
+			select {
+			case event := <-broker.Next():
+				fileName := filepath.Base(event.Path)
 
-				removed := process.EndProcessCheck()
-				if !removed {
+				if fileName != "status" {
 					continue
 				}
-				logger.GlobalLogger.AddToLog("INFO", "Status File Deleted, Exiting Process...")
-				logger.GlobalLogger.Notify("Status File Deleted, Exiting Process...")
-				os.Exit(0)
+
+				if event.Type.String() == "Remove" {
+					removed := process.EndProcessCheck()
+					if !removed {
+						continue
+					}
+					exitChan <- true
+					broker.Stop()
+					return
+				}
+			case error := <-broker.Error():
+				err = fmt.Errorf("error in status watcher: %v", error)
+				logger.GlobalLogger.AddToLog("ERROR", err.Error())
+				broker.Stop()
+				return
 			}
-		case error := <-broker.Error():
-			err = fmt.Errorf("error in status watcher: %v", error)
-			logger.GlobalLogger.AddToLog("ERROR", err.Error())
-			fmt.Println(error.Error())
 		}
-	}
+	}()
+
+	return exitChan
 }

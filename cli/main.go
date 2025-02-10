@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/Arinji2/downloads-cli/logger"
@@ -50,20 +51,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	watcher.StartStatusWatchr()
-
-	select {}
-
-	// c := make(chan os.Signal, 1)
-	// signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-	// <-c
-
-	// stop := make(chan os.Signal, 1)
-	// signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
-	// <-stop
-	//
-	// fmt.Println("Shutting down gracefully...")
-	// shutdown(s)
+	exitChan := watcher.StartStatusWatchr()
+	if <-exitChan {
+		fmt.Println("Received exit signal, stopping program...")
+		shutdown(s)
+		os.Exit(0)
+	}
 }
 
 func setupOperations(s *store.Store, o *options.Options) {
