@@ -2,6 +2,7 @@ package options
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 )
@@ -45,6 +46,24 @@ func GetOptions() Options {
 	if err := json.Unmarshal(contents, &options); err != nil {
 		log.Fatalf("Failed to unmarshal options: %v", err)
 	}
+	fmt.Println("Verifying Options")
+	verified, err := verifyFolder("Downloads Folder", options.DownloadsFolder)
+	if err != nil {
+		log.Fatalf("Failed to verify Downloads Folder: %v", err)
+	}
+	if !verified {
+		log.Fatalf("Failed to verify Downloads Folder")
+	}
 
+	for key, value := range options.MovePresets {
+		verified, err := verifyFolder(key, value)
+		if err != nil {
+			log.Fatalf("Failed to verify %s Folder: %v", key, err)
+		}
+		if !verified {
+			log.Fatalf("Failed to verify %s Folder", key)
+		}
+	}
+	fmt.Println("Options Verified")
 	return options
 }
