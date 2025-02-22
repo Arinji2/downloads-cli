@@ -54,7 +54,7 @@ export default function RootLayout({
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="News Nest" />
+        <meta name="twitter:title" content="Downloads On Steroids" />
         <meta
           name="twitter:description"
           content="Downloads on Steroids (DOS) is a tool that makes downloading files from the web easy and fast. It works using just filenames, making it cross platform, simple and easy to use. Delete, Move and Link files with ease, only on DOS"
