@@ -90,6 +90,5 @@ func setupOperations(s *store.Store, o *options.Options) {
 	go deleteJob.RunDeleteJobs()
 	go moveJob.RunMoveJobs()
 	go linkJob.RunLinkJobs()
-
 	startup(o.DownloadsFolder, s, &w)
 }
