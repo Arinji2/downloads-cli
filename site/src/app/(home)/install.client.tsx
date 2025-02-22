@@ -117,7 +117,7 @@ export default function Install({ isWindowsOS }: { isWindowsOS: boolean }) {
             ) : (
               <li className="text-sm text-brand-offWhite ">
                 {
-                  "I don't own a MacOS device, so the installation process isn't documented here. However, you do need to go into your device permissions and allow the executable Darwin file."
+                  "I don't own a MacOS device, so the installation process isn't documented here. However, you do need to go into your device permissions and allow the executable Darwin file. Feel free to refer to the linux install if needed."
                 }
               </li>
             )}
