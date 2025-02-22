@@ -56,6 +56,7 @@ func main() {
 			setupOperations(s, &opts)
 		}
 	}()
+
 	if <-channels.Exit {
 		fmt.Println("Received exit signal, stopping program...")
 		shutdown(s)
