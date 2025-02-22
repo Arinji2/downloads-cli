@@ -3,6 +3,7 @@ package link
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 
@@ -93,9 +94,12 @@ func (l *Link) RunLinkJobs() {
 				if data.InProgress {
 					continue
 				}
-				created, _, err := FoundLink(data, l)
+				created, statusCode, _, err := FoundLink(data, l)
 				if err != nil {
 					logger.GlobalLogger.AddToLog("ERROR", err.Error())
+					if statusCode == http.StatusInternalServerError {
+						logger.GlobalLogger.Notify("Link Creation Failed due to Upstream Error, please wait for this to resolve.")
+					}
 					continue
 				}
 				if !created {

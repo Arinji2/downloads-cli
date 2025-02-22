@@ -40,10 +40,10 @@ func getEndpoint(linkType LinkType) Endpoint {
 	}
 }
 
-func (u *Upload) UploadData() (string, error) {
+func (u *Upload) UploadData() (string, int, error) {
 	file, err := os.ReadFile(u.FilePath)
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
 
 	fileName := filepath.Base(u.FilePath)
@@ -72,30 +72,30 @@ func (u *Upload) UploadData() (string, error) {
 	}()
 	endpoint := getEndpoint(u.UploadType)
 	if endpoint.domain == "" {
-		return "", errors.New("invalid upload type")
+		return "", 0, errors.New("invalid upload type")
 	}
 	req, err := http.NewRequest(http.MethodPost, endpoint.domain, r)
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
 	req.Header.Add("Content-Type", m.FormDataContentType())
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
 
 	if strings.HasPrefix(string(body), endpoint.responsePrefix) {
-		return string(body), nil
+		return string(body), http.StatusOK, nil
 	}
-	return "", errors.New("invalid response from endpoint")
+	return "", resp.StatusCode, errors.New("invalid response from endpoint")
 }
 
 func (u *Upload) DeletedUploadedFile(uploadID string) error {

@@ -1,6 +1,7 @@
 package link_test
 
 import (
+	"net/http"
 	"os"
 	"testing"
 
@@ -30,8 +31,11 @@ func TestFoundLink_Perm(t *testing.T) {
 	if len(data) != 1 {
 		t.Fatalf("Expected 1 stored data, got %d", len(data))
 	}
-	linked, destPath, err := link.FoundLink(data[0], linkJob)
+	linked, statusCode, destPath, err := link.FoundLink(data[0], linkJob)
 	if err != nil {
+		if statusCode == http.StatusInternalServerError {
+			t.Skip("Skipping test because of internal server error")
+		}
 		t.Fatalf("TestFoundLink_Perm failed: %v", err)
 	}
 
@@ -78,8 +82,11 @@ func TestFoundLink_Temp(t *testing.T) {
 	if len(data) != 1 {
 		t.Fatalf("Expected 1 stored data, got %d", len(data))
 	}
-	linked, destPath, err := link.FoundLink(data[0], linkJob)
+	linked, statusCode, destPath, err := link.FoundLink(data[0], linkJob)
 	if err != nil {
+		if statusCode == http.StatusInternalServerError {
+			t.Skip("Skipping test because of internal server error")
+		}
 		t.Fatalf("TestFoundLink_Temp failed: %v", err)
 	}
 

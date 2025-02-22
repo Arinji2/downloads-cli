@@ -10,7 +10,7 @@ import (
 	"github.com/Arinji2/downloads-cli/store"
 )
 
-func FoundLink(data store.StoredData, l *Link) (bool, string, error) {
+func FoundLink(data store.StoredData, l *Link) (bool, int, string, error) {
 	core.UpdateProgress(data, true, l.Operations)
 	defer l.Operations.Store.DeleteStoredData(data.ID)
 
@@ -25,15 +25,15 @@ func FoundLink(data store.StoredData, l *Link) (bool, string, error) {
 	case LinkPerm:
 		upload.UploadType = LinkPerm
 	default:
-		return false, "", errors.New("invalid link type for switch")
+		return false, 0, "", errors.New("invalid link type for switch")
 	}
 
 	if l.UserHash != "" {
 		upload.UserHash = l.UserHash
 	}
-	url, err := upload.UploadData()
+	url, statusCode, err := upload.UploadData()
 	if err != nil {
-		return false, "", err
+		return false, statusCode, "", err
 	}
 	logger.GlobalLogger.AddToLog("INFO", fmt.Sprintf("Created link for file: %s", data.Args[0]))
 
@@ -43,11 +43,11 @@ func FoundLink(data store.StoredData, l *Link) (bool, string, error) {
 	linkedFile, linked, err := core.RenameToLink(urlID, string(linkType), path)
 	if err != nil {
 		logger.GlobalLogger.AddToLog("ERROR", err.Error())
-		return false, "", err
+		return false, statusCode, "", err
 	}
 
 	if !linked {
-		return false, "", fmt.Errorf("failed to rename file to link")
+		return false, statusCode, "", fmt.Errorf("failed to rename file to link")
 	}
-	return true, linkedFile, nil
+	return true, statusCode, linkedFile, nil
 }
