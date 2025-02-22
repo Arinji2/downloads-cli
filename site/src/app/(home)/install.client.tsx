@@ -10,9 +10,9 @@ export default function Install({ isWindowsOS }: { isWindowsOS: boolean }) {
   const params = useMemo(() => {
     return new URLSearchParams(searchParams);
   }, [searchParams]);
-  const [selectedMode, setSelectedMode] = useState<"WINDOWS" | "LINUX">(
-    isWindowsOS ? "WINDOWS" : "LINUX",
-  );
+  const [selectedMode, setSelectedMode] = useState<
+    "WINDOWS" | "LINUX" | "MACOS"
+  >(isWindowsOS ? "WINDOWS" : "LINUX");
   useEffect(() => {
     if (!params.has("selectedOS")) {
       return;
@@ -22,6 +22,8 @@ export default function Install({ isWindowsOS }: { isWindowsOS: boolean }) {
       setSelectedMode("WINDOWS");
     } else if (tab === "LINUX") {
       setSelectedMode("LINUX");
+    } else if (tab === "MACOS") {
+      setSelectedMode("MACOS");
     }
   }, [params]);
   return (
@@ -51,6 +53,14 @@ export default function Install({ isWindowsOS }: { isWindowsOS: boolean }) {
           paramName={"selectedOS"}
           paramValue={"linux"}
         />
+
+        <SelectTabItem
+          name={"MacOS"}
+          isActive={selectedMode === "MACOS"}
+          params={params}
+          paramName={"selectedOS"}
+          paramValue={"macos"}
+        />
       </div>
       <ol className="items-start  list-decimal  list-inside marker:text-lg marker:font-bold marker:text-brand-primaryLight justify-start gap-7 w-full h-fit flex flex-col">
         <li className="text-sm text-brand-offWhite md:max-w-[80%]">
@@ -75,7 +85,9 @@ export default function Install({ isWindowsOS }: { isWindowsOS: boolean }) {
           <span className="text-brand-primaryLight">
             {selectedMode === "WINDOWS"
               ? "_windows_amd64.tar.gz"
-              : "_linux_amd64.tar.gz"}
+              : selectedMode === "LINUX"
+                ? "_linux_amd64.tar.gz"
+                : "_darwin_amd64.tar.gz"}
           </span>
         </li>
         <li className="text-sm text-brand-offWhite md:max-w-[80%]">
@@ -90,17 +102,23 @@ export default function Install({ isWindowsOS }: { isWindowsOS: boolean }) {
               <li className="text-sm text-brand-offWhite ">
                 Double click the executable file.
               </li>
-            ) : (
+            ) : selectedMode === "LINUX" ? (
               <li className="text-sm text-brand-offWhite ">
                 Open a terminal and navigate to the folder you extracted the
                 executable file to.
-                <code className="p-2 block  text-brand-primaryLight my-2 bg-shades-lightBlack shadow-brand ">
+                <code className="p-2 block text-brand-primaryLight my-2 bg-shades-lightBlack shadow-brand">
                   chmod +x ./dos
                 </code>
                 Then run the executable file. <br />
-                <code className="p-2 block  text-brand-primaryLight my-2 bg-shades-lightBlack shadow-brand ">
+                <code className="p-2 block text-brand-primaryLight my-2 bg-shades-lightBlack shadow-brand">
                   ./dos
                 </code>
+              </li>
+            ) : (
+              <li className="text-sm text-brand-offWhite ">
+                {
+                  "I don't own a MacOS device, so the installation process isn't documented here. However, you do need to go into your device permissions and allow the executable Darwin file."
+                }
               </li>
             )}
           </ul>
