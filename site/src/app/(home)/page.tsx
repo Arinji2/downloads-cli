@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { Suspense } from "react";
 import Example from "./(example)/example.client";
 import Demo from "./demo.client";
+import Faq from "./faq";
 import Feature from "./feature";
 import Footer from "./footer";
 import Hero from "./hero";
@@ -26,6 +27,7 @@ export default async function Home() {
         <Install isWindowsOS={isWindowsOS} />
         <Demo />
       </Suspense>
+      <Faq />
       <Footer />
       <RedirectButton />
     </div>
